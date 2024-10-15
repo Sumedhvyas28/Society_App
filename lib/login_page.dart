@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:society_app/pages/dashboard/dashbord.dart';
 import 'package:society_app/constant/pallete.dart';
 
 class LoginPage extends StatefulWidget {
@@ -112,12 +113,20 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 child: SingleChildScrollView(
                   controller: scrollController,
-                  child: const Padding(
-                    padding: EdgeInsets.all(8.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(height: 10),
+                        const SizedBox(height: 10),
+                        ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => DashbordPage()));
+                            },
+                            child: const Text('next page'))
                       ],
                     ),
                   ),
