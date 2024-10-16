@@ -86,7 +86,7 @@ class _DashbordPageState extends State<DashbordPage> {
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 60,
-                  mainAxisSpacing: 20,
+                  mainAxisSpacing: 10,
                   childAspectRatio: 1,
                 ),
                 itemCount: gridItems.length,
@@ -104,7 +104,7 @@ class _DashbordPageState extends State<DashbordPage> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
-                      elevation: 4,
+                      elevation: 3,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

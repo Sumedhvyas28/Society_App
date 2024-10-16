@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:society_app/pages/dashboard/dashbord.dart';
+import 'package:go_router/go_router.dart';
 import 'package:society_app/constant/pallete.dart';
 
 class LoginPage extends StatefulWidget {
@@ -121,10 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 10),
                         ElevatedButton(
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => DashbordPage()));
+                              GoRouter.of(context).go('/home');
                             },
                             child: const Text('next page'))
                       ],
