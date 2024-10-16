@@ -60,12 +60,19 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/img/login_page.png
+
+    - assets/img/dashboard/notification/
+    - assets/img/dashboard/Amenity_booking/
+    - assets/img/dashboard/directory/
+    - assets/img/dashboard/gallery/
+    - assets/img/dashboard/labour/
+    - assets/img/dashboard/medical_module/
+    - assets/img/dashboard/rent_sale/
+    - assets/img/dashboard/sale_household/
+    - assets/img/dashboard/security_service/
+    - assets/img/dashboard/shop_module/
+    - assets/img/dashboard/tiffin_management/
   
-    - assets/shop_module/shop_module.png
-    - assets/shop_module/grocery.png
-    - assets/notifcation/bell.png
-    - assets/labour/labour.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

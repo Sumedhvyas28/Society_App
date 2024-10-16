@@ -114,6 +114,11 @@ class _DashbordPageState extends State<DashbordPage> {
                             width: 90,
                             fit: BoxFit.cover,
                           ),
+                          Text(
+                            gridItems[index]['title'],
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.bold),
+                          )
                         ],
                       ),
                     ),
