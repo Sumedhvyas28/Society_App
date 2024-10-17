@@ -1,4 +1,5 @@
 import 'package:society_app/pages/dashboard/Society_noti/society_notification.dart';
+import 'package:society_app/pages/dashboard/amenity_booking/amenity.dart';
 import 'package:society_app/pages/dashboard/labour%20module/labour_page.dart';
 import 'package:society_app/pages/dashboard/shop%20module/shop_landing.dart';
 
@@ -21,7 +22,7 @@ final List<Map<String, dynamic>> gridItems = [
   {
     'image': 'assets/img/dashboard/Amenity_booking/amenity.png',
     'title': 'Amenity Booking',
-    'page': ShopLanding(),
+    'page': AmenityPage(),
   },
   {
     'image': 'assets/img/dashboard/medical_module/medical.png',
@@ -30,7 +31,7 @@ final List<Map<String, dynamic>> gridItems = [
   },
   {
     'image': 'assets/img/dashboard/security_service/security.png',
-    'title': 'Security Gate Service ',
+    'title': 'Security Service ',
     'page': ShopLanding(),
   },
   {
@@ -40,7 +41,7 @@ final List<Map<String, dynamic>> gridItems = [
   },
   {
     'image': 'assets/img/dashboard/rent_sale/list_sale.png',
-    'title': 'List Flat for Rent/Sale',
+    'title': 'Flat for Rent/Sale',
     'page': ShopLanding(),
   },
   {

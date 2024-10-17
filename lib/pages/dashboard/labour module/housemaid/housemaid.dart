@@ -62,12 +62,30 @@ class _HousemaidPageState extends State<HousemaidPage> {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                     ),
-                    Text(
-                      '* * * * *',
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 255, 230, 0),
-                          fontSize: 15),
-                    ),
+                    Row(
+                      children: [
+                        Image.asset(
+                          'assets/img/dashboard/labour/star.png',
+                          height: 9,
+                        ),
+                        Image.asset(
+                          'assets/img/dashboard/labour/star.png',
+                          height: 9,
+                        ),
+                        Image.asset(
+                          'assets/img/dashboard/labour/star.png',
+                          height: 9,
+                        ),
+                        Image.asset(
+                          'assets/img/dashboard/labour/star.png',
+                          height: 9,
+                        ),
+                        Image.asset(
+                          'assets/img/dashboard/labour/star.png',
+                          height: 9,
+                        ),
+                      ],
+                    )
                   ],
                 ),
               ),

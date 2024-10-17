@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/models/shop_modules/shop_items.dart';
+import 'package:society_app/models/amenity_booking/available_amentity_data.dart';
 
-class ShopLanding extends StatelessWidget {
-  const ShopLanding({super.key});
+class AvailableAmenitiesPage extends StatefulWidget {
+  const AvailableAmenitiesPage({super.key});
 
+  @override
+  State<AvailableAmenitiesPage> createState() => _AvailableAmenitiesPageState();
+}
+
+class _AvailableAmenitiesPageState extends State<AvailableAmenitiesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,8 +20,8 @@ class ShopLanding extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(9),
           child: Column(
-              children: List.generate(shopItems.length, (index) {
-            return _buildCard(context, index, shopItems[index]);
+              children: List.generate(availableAmenitiesItems.length, (index) {
+            return _buildCard(context, index, availableAmenitiesItems[index]);
           })),
         ),
       ),
@@ -26,8 +31,10 @@ class ShopLanding extends StatelessWidget {
   Widget _buildCard(BuildContext context, index, dynamic item) {
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => shopItems[index]['page']));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => availableAmenitiesItems[index]['page']));
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 10),

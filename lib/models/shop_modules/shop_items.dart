@@ -1,4 +1,5 @@
 import 'package:society_app/pages/dashboard/shop%20module/grocery_page.dart';
+import 'package:society_app/pages/dashboard/shop%20module/restaurent/restaurent.dart';
 
 final List<Map<String, dynamic>> shopItems = [
   {
@@ -26,9 +27,9 @@ final List<Map<String, dynamic>> shopItems = [
     "id": 4,
   },
   {
-    'img': 'assets/img/dashboard/shop_module/grocery.png',
+    'img': 'assets/img/dashboard/shop_module/restaurent.png',
     'title': 'restaurent',
-    'page': GroceryPage(),
+    'page': RestaurentPage(),
     "id": 5,
   },
   {

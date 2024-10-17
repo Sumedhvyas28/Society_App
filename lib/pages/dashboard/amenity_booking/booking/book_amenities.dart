@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/models/shop_modules/shop_items.dart';
+import 'package:society_app/models/amenity_booking/book_amenities_data.dart';
 
-class ShopLanding extends StatelessWidget {
-  const ShopLanding({super.key});
+class BookAmenitiesPage extends StatefulWidget {
+  const BookAmenitiesPage({super.key});
 
+  @override
+  State<BookAmenitiesPage> createState() => _BookAmenitiesPageState();
+}
+
+class _BookAmenitiesPageState extends State<BookAmenitiesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,8 +20,8 @@ class ShopLanding extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(9),
           child: Column(
-              children: List.generate(shopItems.length, (index) {
-            return _buildCard(context, index, shopItems[index]);
+              children: List.generate(bookAmenitiesItems.length, (index) {
+            return _buildCard(context, index, bookAmenitiesItems[index]);
           })),
         ),
       ),
@@ -26,8 +31,10 @@ class ShopLanding extends StatelessWidget {
   Widget _buildCard(BuildContext context, index, dynamic item) {
     return InkWell(
       onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => shopItems[index]['page']));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => bookAmenitiesItems[index]['page']));
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 10),
