@@ -28,7 +28,7 @@ final List<Map<String, dynamic>> shopItems = [
   },
   {
     'img': 'assets/img/dashboard/shop_module/restaurent.png',
-    'title': 'restaurent',
+    'title': 'restaurant',
     'page': RestaurentPage(),
     "id": 5,
   },

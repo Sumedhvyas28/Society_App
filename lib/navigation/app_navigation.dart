@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:go_router/go_router.dart';
+import 'package:society_app/create_page.dart';
 import 'package:society_app/login_page.dart';
 import 'package:society_app/pages/dashboard/dashbord.dart';
 import 'package:society_app/pages/coupon/coupon.dart';
@@ -28,6 +28,15 @@ class AppNavigation {
         name: 'login',
         builder: (context, state) {
           return LoginPage(
+            key: state.pageKey,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/signup', // Update the path to be lowercase and without spaces
+        name: 'SignUp', // Ensure consistency in the route name
+        builder: (context, state) {
+          return SignUpPage(
             key: state.pageKey,
           );
         },
