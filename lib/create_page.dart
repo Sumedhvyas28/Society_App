@@ -212,7 +212,7 @@ class _SignUpPageState extends State<SignUpPage> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                        'Please sign up as a Residential User to proceed'),
+                                        'Please sign up with a specified role to proceed'),
                                   ),
                                 );
                               }

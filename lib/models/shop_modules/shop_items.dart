@@ -1,5 +1,5 @@
-import 'package:society_app/pages/dashboard/shop%20module/grocery_page.dart';
-import 'package:society_app/pages/dashboard/shop%20module/restaurent/restaurent.dart';
+import 'package:society_app/pages/user_dashboard/modules/shop%20module/grocery_page.dart';
+import 'package:society_app/pages/user_dashboard/modules/shop%20module/restaurent/restaurent.dart';
 
 final List<Map<String, dynamic>> shopItems = [
   {

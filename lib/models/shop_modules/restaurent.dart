@@ -1,5 +1,5 @@
-import 'package:society_app/pages/dashboard/chat.dart';
-import 'package:society_app/pages/dashboard/shop%20module/restaurent/restaurent_detail.dart';
+import 'package:society_app/pages/user_dashboard/modules/chat.dart';
+import 'package:society_app/pages/user_dashboard/modules/shop%20module/restaurent/restaurent_detail.dart';
 
 final List<Map<String, dynamic>> restaurentItems = [
   {

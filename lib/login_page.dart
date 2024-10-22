@@ -14,6 +14,9 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _emailFocusNode = FocusNode();
   bool _isEmailFocused = false;
 
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -141,6 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 20),
                           TextField(
                             focusNode: _emailFocusNode,
+                            controller: emailController,
                             decoration: InputDecoration(
                               labelText: _isEmailFocused ? null : 'Email',
                               prefixIcon: Icon(Icons.email),
@@ -152,6 +156,7 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 20),
                           TextField(
                             obscureText: _obscureText,
+                            controller: passwordController,
                             decoration: InputDecoration(
                               labelText: 'Password',
                               prefixIcon: Icon(Icons.lock),
@@ -191,6 +196,9 @@ class _LoginPageState extends State<LoginPage> {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {
+                                // login(emailController.text.toString(),
+                                //     passwordController.text.toString());
+
                                 GoRouter.of(context).go('/home');
                               },
                               style: ElevatedButton.styleFrom(
@@ -247,4 +255,21 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  // void login(String email, String password) async {
+  //   try {
+  //     Response response = await post(
+  //       Uri.parse('https://dummyjson.com/auth/login'),
+  //       body: {
+  //         "email": email,
+  //         "password": password,
+  //       },
+  //     );
+  //     if (response.statusCode == 200) {
+  //       print('Account created Successfully');
+  //     } else {
+  //       print('failed');
+  //     }
+  //   } catch (e) {}
+  // }
 }

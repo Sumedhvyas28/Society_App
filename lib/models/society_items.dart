@@ -1,4 +1,4 @@
-import 'package:society_app/pages/dashboard/Society_noti/new_society.dart';
+import 'package:society_app/pages/user_dashboard/modules/Society_noti/new_society.dart';
 
 final List<Map<String, dynamic>> societyNotificationItems = [
   {

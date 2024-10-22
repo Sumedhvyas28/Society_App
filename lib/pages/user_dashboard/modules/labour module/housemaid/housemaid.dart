@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/models/labour/housemaid.dart';
-import 'package:society_app/pages/dashboard/labour%20module/housemaid/details.dart';
+import 'package:society_app/pages/user_dashboard/modules/labour%20module/housemaid/details.dart';
 
 class HousemaidPage extends StatefulWidget {
   const HousemaidPage({super.key});

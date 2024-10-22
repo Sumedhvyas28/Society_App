@@ -1,4 +1,4 @@
-import 'package:society_app/pages/dashboard/labour%20module/housemaid/housemaid.dart';
+import 'package:society_app/pages/user_dashboard/modules/labour%20module/housemaid/housemaid.dart';
 
 final List<Map<String, dynamic>> labourItems = [
   {

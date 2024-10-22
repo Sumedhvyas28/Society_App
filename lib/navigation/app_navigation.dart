@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:society_app/create_page.dart';
+import 'package:society_app/homeBaseDashboard.dart';
 import 'package:society_app/login_page.dart';
-import 'package:society_app/pages/dashboard/dashbord.dart';
-import 'package:society_app/pages/coupon/coupon.dart';
-import 'package:society_app/pages/my_unit/my_unit.dart';
-import 'package:society_app/pages/wallet/wallet.dart';
+import 'package:society_app/pages/user_dashboard/modules/dashbord.dart';
+import 'package:society_app/pages/user_dashboard/coupon/coupon.dart';
+import 'package:society_app/pages/user_dashboard/my_unit/my_unit.dart';
+import 'package:society_app/pages/user_dashboard/wallet/wallet.dart';
 import 'package:society_app/starter_page.dart';
 
 class AppNavigation {
@@ -56,7 +57,7 @@ class AppNavigation {
                 path: '/home',
                 name: 'Home',
                 builder: (context, state) {
-                  return DashbordPage(
+                  return HomebasePage(
                     key: state.pageKey,
                   );
                 },

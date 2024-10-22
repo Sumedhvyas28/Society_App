@@ -1,7 +1,7 @@
-import 'package:society_app/pages/dashboard/Society_noti/society_notification.dart';
-import 'package:society_app/pages/dashboard/amenity_booking/amenity.dart';
-import 'package:society_app/pages/dashboard/labour%20module/labour_page.dart';
-import 'package:society_app/pages/dashboard/shop%20module/shop_landing.dart';
+import 'package:society_app/pages/user_dashboard/modules/Society_noti/society_notification.dart';
+import 'package:society_app/pages/user_dashboard/modules/amenity_booking/amenity.dart';
+import 'package:society_app/pages/user_dashboard/modules/labour%20module/labour_page.dart';
+import 'package:society_app/pages/user_dashboard/modules/shop%20module/shop_landing.dart';
 
 final List<Map<String, dynamic>> gridItems = [
   {
