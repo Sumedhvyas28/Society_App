@@ -77,8 +77,12 @@ flutter:
     - assets/img/dashboard/security_service/
     - assets/img/dashboard/shop_module/
     - assets/img/dashboard/tiffin_management/
+    - assets/img/gs/
+    - assets/img/bp/
+    
     - assets/navbar/
     - assets/animation/
+    
 
   
     

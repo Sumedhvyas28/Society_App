@@ -3,8 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:society_app/create_page.dart';
 import 'package:society_app/homeBaseDashboard.dart';
 import 'package:society_app/login_page.dart';
-import 'package:society_app/pages/user_dashboard/modules/dashbord.dart';
+import 'package:society_app/pages/bp_dashboard/bp_dashboard.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/security_dashboard.dart';
+import 'package:society_app/pages/society_admin_dashboard/sa_dashboard.dart';
+import 'package:society_app/pages/super_admin_dashboard/super_dashboard.dart';
 import 'package:society_app/pages/user_dashboard/coupon/coupon.dart';
+import 'package:society_app/pages/user_dashboard/modules/dashbord.dart';
 import 'package:society_app/pages/user_dashboard/my_unit/my_unit.dart';
 import 'package:society_app/pages/user_dashboard/wallet/wallet.dart';
 import 'package:society_app/starter_page.dart';
@@ -58,6 +62,55 @@ class AppNavigation {
                 name: 'Home',
                 builder: (context, state) {
                   return HomebasePage(
+                    key: state.pageKey,
+                  );
+                },
+              ),
+              // user
+              GoRoute(
+                path: '/userdashboard',
+                name: 'Userdashboard',
+                builder: (context, state) {
+                  return DashbordPage(
+                    key: state.pageKey,
+                  );
+                },
+              ),
+              // super admin
+              GoRoute(
+                path: '/superadmindashboard',
+                name: 'Superadmindashboard',
+                builder: (context, state) {
+                  return SuperDashboard(
+                    key: state.pageKey,
+                  );
+                },
+              ),
+              // society admin
+              GoRoute(
+                path: '/societyadminpage',
+                name: 'Societyadminpage',
+                builder: (context, state) {
+                  return AdminDashboardPage(
+                    key: state.pageKey,
+                  );
+                },
+              ),
+              // bp page
+              GoRoute(
+                path: '/bpdashboard',
+                name: 'Bpdashboard',
+                builder: (context, state) {
+                  return BpDashboardpage(
+                    key: state.pageKey,
+                  );
+                },
+              ),
+              GoRoute(
+                path: '/securitypage',
+                name: 'SecurityPage',
+                builder: (context, state) {
+                  return SecurityDashboardpage(
                     key: state.pageKey,
                   );
                 },

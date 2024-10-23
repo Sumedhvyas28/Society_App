@@ -199,6 +199,12 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                         const SizedBox(height: 20),
+                        //                         'Super Admin',
+                        // 'Society Admin',
+                        // 'Residential User',
+                        // 'Vendors',
+                        // 'Business Partners',
+                        // 'Security Gatekeeper',
 
                         // Sign Up Button
                         SizedBox(
@@ -207,6 +213,15 @@ class _SignUpPageState extends State<SignUpPage> {
                             onPressed: () {
                               if (_selectedName == 'Residential User') {
                                 GoRouter.of(context).go('/home');
+                              } else if (_selectedName == 'Society Admin') {
+                                GoRouter.of(context).go('/societyadminpage');
+                              } else if (_selectedName == 'Super Admin') {
+                                GoRouter.of(context).go('/superadmindashboard');
+                              } else if (_selectedName == 'Business Partners') {
+                                GoRouter.of(context).go('/bpdashboard');
+                              } else if (_selectedName ==
+                                  'Security Gatekeeper') {
+                                GoRouter.of(context).go('/securitypage');
                               } else {
                                 // Handle sign-up for other roles
                                 ScaffoldMessenger.of(context).showSnackBar(

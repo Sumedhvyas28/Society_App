@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:http/http.dart';
 import 'package:society_app/constant/pallete.dart';
 
 class LoginPage extends StatefulWidget {
@@ -16,6 +19,45 @@ class _LoginPageState extends State<LoginPage> {
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  void login(String email, String password) async {
+    try {
+      Response response = await post(
+        Uri.parse(
+            'https://stagging.intouchsoftwaresolution.com/api/login'), // Adjust the URL to your actual API
+        body: {
+          "email": email,
+          "password": password,
+        },
+      );
+
+      var data = jsonDecode(response.body.toString());
+
+      if (data['success'] == true) {
+        // Extract the token and name
+        var token = data['data']['token'];
+        var name = data['data']['name'];
+        var message = data['message'];
+
+        print('Token: $token');
+        print('Name: $name');
+        print('Message: $message');
+
+        // Proceed to the dashboard after successful login
+        GoRouter.of(context).go('/userdashboard');
+      } else {
+        // Handle failure (if success is not true)
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please fill in all the required fields to proceed'),
+          ),
+        );
+      }
+    } catch (e) {
+      // Handle exceptions
+      print('Error: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -196,10 +238,10 @@ class _LoginPageState extends State<LoginPage> {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () {
-                                // login(emailController.text.toString(),
-                                //     passwordController.text.toString());
+                                login(emailController.text.toString(),
+                                    passwordController.text.toString());
 
-                                GoRouter.of(context).go('/home');
+                                // GoRouter.of(context).go('/home');
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Pallete.mainDashColor,
