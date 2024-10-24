@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/pages/super_admin_dashboard/super_models.dart';
+import 'package:society_app/pages/vendor_dashboard/vendor_model.dart';
 
-class SuperDashboard extends StatefulWidget {
-  const SuperDashboard({super.key});
+class VendorDashboardPage extends StatefulWidget {
+  const VendorDashboardPage({super.key});
 
   @override
-  State<SuperDashboard> createState() => _SuperDashboardState();
+  State<VendorDashboardPage> createState() => _VendorDashboardPageState();
 }
 
-class _SuperDashboardState extends State<SuperDashboard> {
+class _VendorDashboardPageState extends State<VendorDashboardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +41,7 @@ class _SuperDashboardState extends State<SuperDashboard> {
                         color: Colors.black,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'Super Admin',
+                        hintText: 'Vendor name',
                         hintStyle: TextStyle(
                           color: Colors.black,
                           fontSize: 20,
@@ -88,7 +88,7 @@ class _SuperDashboardState extends State<SuperDashboard> {
                   mainAxisSpacing: 10,
                   childAspectRatio: 1,
                 ),
-                itemCount: superGridItems.length,
+                itemCount: vendorGridItems.length,
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
@@ -96,7 +96,7 @@ class _SuperDashboardState extends State<SuperDashboard> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                superGridItems[index]['page']),
+                                vendorGridItems[index]['page']),
                       );
                     },
                     child: Card(
@@ -109,13 +109,13 @@ class _SuperDashboardState extends State<SuperDashboard> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
-                            superGridItems[index]['image'],
+                            vendorGridItems[index]['image'],
                             height: 100,
                             width: 90,
                             fit: BoxFit.cover,
                           ),
                           Text(
-                            superGridItems[index]['title'],
+                            vendorGridItems[index]['title'],
                             style: TextStyle(
                                 fontSize: 12, fontWeight: FontWeight.bold),
                           )

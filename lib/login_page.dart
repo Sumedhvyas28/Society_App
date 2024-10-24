@@ -21,10 +21,18 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController passwordController = TextEditingController();
 
   void login(String email, String password) async {
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter both email and password'),
+        ),
+      );
+      return;
+    }
+
     try {
       Response response = await post(
-        Uri.parse(
-            'https://stagging.intouchsoftwaresolution.com/api/login'), // Adjust the URL to your actual API
+        Uri.parse('https://stagging.intouchsoftwaresolution.com/api/login'),
         body: {
           "email": email,
           "password": password,
@@ -34,7 +42,6 @@ class _LoginPageState extends State<LoginPage> {
       var data = jsonDecode(response.body.toString());
 
       if (data['success'] == true) {
-        // Extract the token and name
         var token = data['data']['token'];
         var name = data['data']['name'];
         var message = data['message'];
@@ -43,18 +50,22 @@ class _LoginPageState extends State<LoginPage> {
         print('Name: $name');
         print('Message: $message');
 
-        // Proceed to the dashboard after successful login
         GoRouter.of(context).go('/userdashboard');
       } else {
-        // Handle failure (if success is not true)
+        var message = data['message'];
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please fill in all the required fields to proceed'),
+          SnackBar(
+            content: Text('Login failed: $message'),
           ),
         );
+        print('Message: $message');
       }
     } catch (e) {
-      // Handle exceptions
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+        ),
+      );
       print('Error: $e');
     }
   }

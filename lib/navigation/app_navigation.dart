@@ -11,6 +11,7 @@ import 'package:society_app/pages/user_dashboard/coupon/coupon.dart';
 import 'package:society_app/pages/user_dashboard/modules/dashbord.dart';
 import 'package:society_app/pages/user_dashboard/my_unit/my_unit.dart';
 import 'package:society_app/pages/user_dashboard/wallet/wallet.dart';
+import 'package:society_app/pages/vendor_dashboard/vendor_dashboard.dart';
 import 'package:society_app/starter_page.dart';
 
 class AppNavigation {
@@ -111,6 +112,15 @@ class AppNavigation {
                 name: 'SecurityPage',
                 builder: (context, state) {
                   return SecurityDashboardpage(
+                    key: state.pageKey,
+                  );
+                },
+              ),
+              GoRoute(
+                path: '/vendorpage',
+                name: 'Vendorpage',
+                builder: (context, state) {
+                  return VendorDashboardPage(
                     key: state.pageKey,
                   );
                 },

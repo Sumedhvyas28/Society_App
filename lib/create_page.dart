@@ -212,7 +212,7 @@ class _SignUpPageState extends State<SignUpPage> {
                           child: ElevatedButton(
                             onPressed: () {
                               if (_selectedName == 'Residential User') {
-                                GoRouter.of(context).go('/home');
+                                GoRouter.of(context).go('/userdashboard');
                               } else if (_selectedName == 'Society Admin') {
                                 GoRouter.of(context).go('/societyadminpage');
                               } else if (_selectedName == 'Super Admin') {
@@ -222,6 +222,8 @@ class _SignUpPageState extends State<SignUpPage> {
                               } else if (_selectedName ==
                                   'Security Gatekeeper') {
                                 GoRouter.of(context).go('/securitypage');
+                              } else if (_selectedName == 'Vendors') {
+                                GoRouter.of(context).go('/vendorpage');
                               } else {
                                 // Handle sign-up for other roles
                                 ScaffoldMessenger.of(context).showSnackBar(
