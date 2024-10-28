@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/all_messages/all.dart';
-import 'package:society_app/pages/gatekeeper_dashboard/guard_accessibility.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/all_messages/chat_page.dart';
 
 class AllMessagePage extends StatefulWidget {
   const AllMessagePage({super.key});
@@ -130,10 +130,8 @@ class _AllMessagePageState extends State<AllMessagePage> {
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => GuardAccessibilityPage()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ChatPage()));
                   },
                   style: ElevatedButton.styleFrom(
                     shape: StadiumBorder(),
