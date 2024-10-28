@@ -1,27 +1,27 @@
-import 'package:society_app/pages/user_dashboard/modules/Society_noti/society_notification.dart';
-import 'package:society_app/pages/user_dashboard/modules/amenity_booking/amenity.dart';
-import 'package:society_app/pages/user_dashboard/modules/labour%20module/labour_page.dart';
-import 'package:society_app/pages/user_dashboard/modules/shop%20module/shop_landing.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/all_messages/all_message.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/guard_accessibility.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/guard_message/guard_message.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/guard_notification/guard_notification.dart';
 
 final List<Map<String, dynamic>> gsGridItems = [
   {
     'image': 'assets/img/gs/guard.png',
     'title': 'Guard Accessibility',
-    'page': ShopLanding(),
+    'page': GuardAccessibilityPage(),
   },
   {
     'image': 'assets/img/dashboard/notification/bell.png',
     'title': 'Guard Notification',
-    'page': LabourPage(),
+    'page': GuardNotificationPage(),
   },
   {
     'image': 'assets/img/gs/guardt.png',
     'title': 'Guard Messages',
-    'page': SocietyNotificationPage(),
+    'page': GuardMessagePage(),
   },
   {
     'image': 'assets/img/gs/message.png',
     'title': 'All Messages',
-    'page': AmenityPage(),
+    'page': AllMessagePage(),
   },
 ];

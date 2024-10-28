@@ -10,6 +10,9 @@ class Pallete {
   static const Color loginImgClr2 = Color.fromRGBO(80, 200, 120, 0.75);
   static const Color loginImg1Clr3 = Color.fromRGBO(80, 200, 120, 1);
   static const Color mainBtnClr = Color.fromRGBO(0, 155, 57, 1);
+  static const Color textBtnClr = Color.fromRGBO(0, 155, 57, 1);
+
+  static const Color greyBtnClr = Color.fromRGBO(255, 226, 226, 226);
 
   static const Color mainDashColor = Color.fromRGBO(80, 200, 120, 1);
 }
