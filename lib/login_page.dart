@@ -43,14 +43,49 @@ class _LoginPageState extends State<LoginPage> {
 
       if (data['success'] == true) {
         var token = data['data']['token'];
-        var name = data['data']['name'];
+        var role = data['data']['name'];
         var message = data['message'];
 
         print('Token: $token');
-        print('Name: $name');
+        print('Name: $role');
         print('Message: $message');
 
-        GoRouter.of(context).go('/userdashboard');
+        // Navigate to the user dashboard based on the user's name
+
+        // user
+        if (role == 'Society Member'
+            // && token == '63|B608exyr5lZ0Zmqg36jrkAcFOvuis3r2lnrTwGueec4e81eb'
+            ) {
+          GoRouter.of(context).go('/userdashboard');
+        }
+
+        //
+        else if (role == 'Society admin') {
+          GoRouter.of(context).go('/societyadminpage');
+        }
+
+        // bp
+        else if (role == 'Business Partner') {
+          GoRouter.of(context).go('/bpdashboard');
+        }
+
+        //super admin
+        else if (role == 'super admin') {
+          GoRouter.of(context).go('/superadmindashboard');
+        }
+
+        // vendor
+        else if (role == 'Society Member') {
+          GoRouter.of(context).go('/vendorpage');
+        }
+
+        // security page
+        else if (role == 'Security Guard') {
+          GoRouter.of(context).go('/securitypage');
+        } else {
+          // Default case if the user name does not match
+          GoRouter.of(context).go('/defaultDashboard');
+        }
       } else {
         var message = data['message'];
         ScaffoldMessenger.of(context).showSnackBar(
