@@ -1,9 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/res/component/round_button.dart';
+import 'package:society_app/utils/utils.dart';
+import 'package:society_app/view_model/auth_view_model.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,98 +16,25 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _obscureText = true;
   final FocusNode _emailFocusNode = FocusNode();
+  final FocusNode _passwordFocusNode = FocusNode();
   bool _isEmailFocused = false;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  void login(String email, String password) async {
-    if (email.isEmpty || password.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter both email and password'),
-        ),
-      );
-      return;
-    }
-
-    try {
-      Response response = await post(
-        Uri.parse('https://stagging.intouchsoftwaresolution.com/api/login'),
-        body: {
-          "email": email,
-          "password": password,
-        },
-      );
-
-      var data = jsonDecode(response.body.toString());
-
-      if (data['success'] == true) {
-        var token = data['data']['token'];
-        var role = data['data']['name'];
-        var message = data['message'];
-
-        print('Token: $token');
-        print('Name: $role');
-        print('Message: $message');
-
-        // Navigate to the user dashboard based on the user's name
-
-        // user
-        if (role == 'Society Member'
-            // && token == '63|B608exyr5lZ0Zmqg36jrkAcFOvuis3r2lnrTwGueec4e81eb'
-            ) {
-          GoRouter.of(context).go('/userdashboard');
-        }
-
-        //
-        else if (role == 'Society admin') {
-          GoRouter.of(context).go('/societyadminpage');
-        }
-
-        // bp
-        else if (role == 'Business Partner') {
-          GoRouter.of(context).go('/bpdashboard');
-        }
-
-        //super admin
-        else if (role == 'super admin') {
-          GoRouter.of(context).go('/superadmindashboard');
-        }
-
-        // vendor
-        else if (role == 'Society Member') {
-          GoRouter.of(context).go('/vendorpage');
-        }
-
-        // security page
-        else if (role == 'Security Guard') {
-          GoRouter.of(context).go('/securitypage');
-        } else {
-          // Default case if the user name does not match
-          GoRouter.of(context).go('/defaultDashboard');
-        }
-      } else {
-        var message = data['message'];
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Login failed: $message'),
-          ),
-        );
-        print('Message: $message');
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-        ),
-      );
-      print('Error: $e');
-    }
+  @override
+  void dispose() {
+    super.dispose();
+    _emailFocusNode.dispose();
+    passwordController.dispose();
+    emailController.dispose();
+    _passwordFocusNode.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final authViewModel = Provider.of<AuthViewModel>(context);
+    final h = MediaQuery.of(context).size.height * 1;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
@@ -233,6 +161,7 @@ class _LoginPageState extends State<LoginPage> {
                           TextField(
                             focusNode: _emailFocusNode,
                             controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
                             decoration: InputDecoration(
                               labelText: _isEmailFocused ? null : 'Email',
                               prefixIcon: Icon(Icons.email),
@@ -240,6 +169,10 @@ class _LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
+                            onSubmitted: (value) {
+                              Utils.fieldFocusChange(
+                                  context, _emailFocusNode, _passwordFocusNode);
+                            },
                           ),
                           const SizedBox(height: 20),
                           TextField(
@@ -280,30 +213,18 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          Container(
-                            width: double.infinity,
-                            child: ElevatedButton(
+                          RoundButton(
+                              title: 'Login',
+                              loading: authViewModel.loading,
                               onPressed: () {
-                                login(emailController.text.toString(),
-                                    passwordController.text.toString());
+                                Map data = {
+                                  "email": emailController.text.toString(),
+                                  "password":
+                                      passwordController.text.toString(),
+                                };
+                                authViewModel.loginRepo(data, context);
+                              }),
 
-                                // GoRouter.of(context).go('/home');
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Pallete.mainDashColor,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 40, vertical: 15),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: Text(
-                                'Login',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 18),
-                              ),
-                            ),
-                          ),
                           const SizedBox(height: 10),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -343,21 +264,4 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
-
-  // void login(String email, String password) async {
-  //   try {
-  //     Response response = await post(
-  //       Uri.parse('https://dummyjson.com/auth/login'),
-  //       body: {
-  //         "email": email,
-  //         "password": password,
-  //       },
-  //     );
-  //     if (response.statusCode == 200) {
-  //       print('Account created Successfully');
-  //     } else {
-  //       print('failed');
-  //     }
-  //   } catch (e) {}
-  // }
 }

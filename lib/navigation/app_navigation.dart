@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:society_app/create_page.dart';
 import 'package:society_app/homeBaseDashboard.dart';
-import 'package:society_app/login_page.dart';
+import 'package:society_app/view/login_page.dart';
 import 'package:society_app/pages/bp_dashboard/bp_dashboard.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/security_dashboard.dart';
 import 'package:society_app/pages/society_admin_dashboard/sa_dashboard.dart';

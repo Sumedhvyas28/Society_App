@@ -1,6 +1,9 @@
-import 'package:society_app/constant/api_constants/routes/api_routes.dart';
+import 'dart:convert';
+
+import 'package:society_app/constant/api_constants/api_headers.dart';
 import 'package:society_app/network/BaseApiService.dart';
 import 'package:society_app/network/NetworkApiService.dart';
+import 'package:society_app/res/app_url.dart';
 
 class AuthRepository {
   BaseApiServices _apiServices = NetworkApiService();
@@ -18,8 +21,10 @@ class AuthRepository {
 
   Future<dynamic> loginRepo(dynamic data) async {
     try {
-      dynamic response =
-          await _apiServices.getPostApiResponse(AppUrl.loginUrl, data);
+      // Convert the data to JSON if not already done in `getPostApiResponse`
+      final response = await _apiServices.getPostApiWithHeaderResponse(
+          AppUrl.loginUrl, jsonEncode(data), postHeader);
+
       return response;
     } catch (e) {
       print('❌❌❌ Login repo ----- $e');
