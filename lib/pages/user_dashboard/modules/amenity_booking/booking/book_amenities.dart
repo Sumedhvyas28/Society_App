@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/models/amenity_booking/book_amenities_data.dart';
+import 'package:society_app/models/dummy/amenity_booking/book_amenities_data.dart';
 
 class BookAmenitiesPage extends StatefulWidget {
   const BookAmenitiesPage({super.key});

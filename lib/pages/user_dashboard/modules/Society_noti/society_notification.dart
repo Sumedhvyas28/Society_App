@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/models/society_items.dart';
+import 'package:society_app/models/dummy/society_items.dart';
 
 class SocietyNotificationPage extends StatefulWidget {
   const SocietyNotificationPage({super.key});

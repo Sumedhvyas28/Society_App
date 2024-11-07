@@ -8,13 +8,13 @@ import 'package:society_app/res/app_url.dart';
 class AuthRepository {
   BaseApiServices _apiServices = NetworkApiService();
 
-  Future<dynamic> registerRepo(dynamic data) async {
+  Future<dynamic> signUpRepo(dynamic data) async {
     try {
       dynamic response =
           await _apiServices.getPostApiResponse(AppUrl.registerUrl, data);
       return response;
     } catch (e) {
-      print('❌❌❌ Register Repo ----- $e');
+      print('❌❌❌ Signup Repo ----- $e');
       throw e;
     }
   }

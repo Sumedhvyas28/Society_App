@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/models/shop_modules/shop_items.dart';
+import 'package:society_app/models/dummy/shop_modules/shop_items.dart';
 
 class ShopLanding extends StatelessWidget {
   const ShopLanding({super.key});

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/res/component/round_button.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -199,56 +200,68 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        //                         'Super Admin',
-                        // 'Society Admin',
-                        // 'Residential User',
-                        // 'Vendors',
-                        // 'Business Partners',
-                        // 'Security Gatekeeper',
+                        Center(
+                          child: RoundButton(
+                              title: 'Sign Up',
+                              // loading: authViewModel.loading,
+                              onPressed: () {}),
+                        ),
 
-                        // Sign Up Button
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              if (_selectedName == 'Residential User') {
-                                GoRouter.of(context).go('/userdashboard');
-                              } else if (_selectedName == 'Society Admin') {
-                                GoRouter.of(context).go('/societyadminpage');
-                              } else if (_selectedName == 'Super Admin') {
-                                GoRouter.of(context).go('/superadmindashboard');
-                              } else if (_selectedName == 'Business Partners') {
-                                GoRouter.of(context).go('/bpdashboard');
-                              } else if (_selectedName ==
-                                  'Security Gatekeeper') {
-                                GoRouter.of(context).go('/securitypage');
-                              } else if (_selectedName == 'Vendors') {
-                                GoRouter.of(context).go('/vendorpage');
-                              } else {
-                                // Handle sign-up for other roles
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text(
-                                        'Please sign up with a specified role to proceed'),
-                                  ),
-                                );
-                              }
+                        // SizedBox(
+                        //   width: double.infinity,
+                        //   child: ElevatedButton(
+                        //     onPressed: () {
+                        //       if (_selectedName == 'Residential User') {
+                        //         GoRouter.of(context).go('/userdashboard');
+                        //       } else if (_selectedName == 'Society Admin') {
+                        //         GoRouter.of(context).go('/societyadminpage');
+                        //       } else if (_selectedName == 'Super Admin') {
+                        //         GoRouter.of(context).go('/superadmindashboard');
+                        //       } else if (_selectedName == 'Business Partners') {
+                        //         GoRouter.of(context).go('/bpdashboard');
+                        //       } else if (_selectedName ==
+                        //           'Security Gatekeeper') {
+                        //         GoRouter.of(context).go('/securitypage');
+                        //       } else if (_selectedName == 'Vendors') {
+                        //         GoRouter.of(context).go('/vendorpage');
+                        //       } else {
+                        //         // Handle sign-up for other roles
+                        //         ScaffoldMessenger.of(context).showSnackBar(
+                        //           const SnackBar(
+                        //             content: Text(
+                        //                 'Please sign up with a specified role to proceed'),
+                        //           ),
+                        //         );
+                        //       }
+                        //     },
+                        //     style: ElevatedButton.styleFrom(
+                        //       backgroundColor: Pallete.mainDashColor,
+                        //       padding: const EdgeInsets.symmetric(
+                        //           horizontal: 40, vertical: 15),
+                        //       shape: RoundedRectangleBorder(
+                        //         borderRadius: BorderRadius.circular(10),
+                        //       ),
+                        //     ),
+                        //     child: const Text(
+                        //       'Sign Up',
+                        //       style:
+                        //           TextStyle(color: Colors.white, fontSize: 18),
+                        //     ),
+                        //   ),
+                        // ),
+                        const SizedBox(height: 5),
+
+                        Center(
+                          child: InkWell(
+                            onTap: () {
+                              GoRouter.of(context).go('/login');
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Pallete.mainDashColor,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 40, vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text(
-                              'Sign Up',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 18),
+                            child: Text(
+                              'Already have an account? Log In',
+                              style: TextStyle(fontSize: 16),
                             ),
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),

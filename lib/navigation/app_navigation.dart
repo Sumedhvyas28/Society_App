@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:society_app/create_page.dart';
+import 'package:society_app/view/create_page.dart';
 import 'package:society_app/homeBaseDashboard.dart';
 import 'package:society_app/view/login_page.dart';
 import 'package:society_app/pages/bp_dashboard/bp_dashboard.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/models/labour/labour_items.dart';
+import 'package:society_app/models/dummy/labour/labour_items.dart';
 
 class LabourPage extends StatefulWidget {
   const LabourPage({super.key});

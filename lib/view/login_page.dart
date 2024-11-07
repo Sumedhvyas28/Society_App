@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/notification_services.dart';
 import 'package:society_app/res/component/round_button.dart';
 import 'package:society_app/utils/utils.dart';
 import 'package:society_app/view_model/auth_view_model.dart';
@@ -21,6 +22,26 @@ class _LoginPageState extends State<LoginPage> {
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+  NotificationServices notificationServices = NotificationServices();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initialTask();
+  }
+
+  void initialTask() {
+    notificationServices.requestNotificationPermission();
+    notificationServices.firebaseInit();
+    notificationServices.getDeviceToken().then(
+      (value) async {
+        print('device token');
+        print(value);
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -226,32 +247,16 @@ class _LoginPageState extends State<LoginPage> {
                               }),
 
                           const SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text(
-                                'New User?',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  GoRouter.of(context).go('/signup');
-                                },
-                                style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 30, vertical: 15),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                child: Text(
-                                  'Create Account',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                              ),
-                            ],
-                          ),
+                          InkWell(
+                            onTap: () {
+                              GoRouter.of(context).go('/signup');
+                            },
+                            child: Text(
+                              "Don't have an account? Sign Up",
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.grey[800]),
+                            ),
+                          )
                         ],
                       ),
                     ),

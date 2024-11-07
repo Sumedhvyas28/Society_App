@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/models/amenity_booking/available_amentity_data.dart';
+import 'package:society_app/models/dummy/amenity_booking/available_amentity_data.dart';
 
 class AvailableAmenitiesPage extends StatefulWidget {
   const AvailableAmenitiesPage({super.key});

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/notification_services.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/sg_model.dart';
 
 class SecurityDashboardpage extends StatefulWidget {
@@ -10,6 +11,20 @@ class SecurityDashboardpage extends StatefulWidget {
 }
 
 class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
+  // NotificationServices notificationServices = NotificationServices();
+
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   notificationServices.requestNotificationPermission();
+  //   notificationServices.isTokenRefresh();
+  //   notificationServices.getDeviceToken().then((value) {
+  //     print('device token');
+  //     print(value);
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

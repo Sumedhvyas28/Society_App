@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/models/grid_items.dart';
+import 'package:society_app/models/dummy/grid_items.dart';
+import 'package:society_app/notification_services.dart';
 
 class DashbordPage extends StatefulWidget {
   const DashbordPage({super.key});
@@ -10,6 +11,20 @@ class DashbordPage extends StatefulWidget {
 }
 
 class _DashbordPageState extends State<DashbordPage> {
+  // NotificationServices notificationServices = NotificationServices();
+
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   notificationServices.requestNotificationPermission();
+  //   notificationServices.isTokenRefresh();
+  //   notificationServices.getDeviceToken().then((value) {
+  //     print('device token');
+  //     print(value);
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
