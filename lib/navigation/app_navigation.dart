@@ -13,11 +13,12 @@ import 'package:society_app/pages/user_dashboard/my_unit/my_unit.dart';
 import 'package:society_app/pages/user_dashboard/wallet/wallet.dart';
 import 'package:society_app/pages/vendor_dashboard/vendor_dashboard.dart';
 import 'package:society_app/starter_page.dart';
+import 'package:society_app/view/splash_screen.dart';
 
 class AppNavigation {
   AppNavigation._();
 
-  static String initR = '/login';
+  static String initR = '/splash';
 
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _rootNavigatorHome = GlobalKey<NavigatorState>();
@@ -29,6 +30,15 @@ class AppNavigation {
     initialLocation: initR,
     navigatorKey: _rootNavigatorKey,
     routes: <RouteBase>[
+      GoRoute(
+        path: '/splash',
+        name: 'splash',
+        builder: (context, state) {
+          return SplashScreen(
+            key: state.pageKey,
+          );
+        },
+      ),
       GoRoute(
         path: '/login',
         name: 'login',

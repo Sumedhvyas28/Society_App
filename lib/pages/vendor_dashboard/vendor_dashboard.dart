@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/pages/vendor_dashboard/more.dart';
 import 'package:society_app/pages/vendor_dashboard/vendor_model.dart';
 
 class VendorDashboardPage extends StatefulWidget {
@@ -72,7 +73,13 @@ class _VendorDashboardPageState extends State<VendorDashboardPage> {
                       color: Colors.black,
                       size: 40,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => VendorMorePage()),
+                      );
+                    },
                   ),
                 ],
               ),

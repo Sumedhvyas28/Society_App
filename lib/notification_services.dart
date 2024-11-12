@@ -45,6 +45,7 @@ class NotificationServices {
 
   void firebaseInit() {
     FirebaseMessaging.onMessage.listen((message) {
+      print('/////////');
       print(message.notification!.title.toString());
       print(message.notification!.body.toString());
       showNotification(message);
@@ -66,12 +67,14 @@ class NotificationServices {
       ticker: 'ticker',
       icon: '@mipmap/ic_launcher', // Add this line
     );
+
     DarwinNotificationDetails darwinNotificationDetails =
         DarwinNotificationDetails(
             presentAlert: true, presentBadge: true, presentSound: true);
 
     NotificationDetails notificationDetails = NotificationDetails(
         android: androidNotificationDetails, iOS: darwinNotificationDetails);
+    print('/////////');
 
     Future.delayed(Duration.zero, () {
       _flutterLocalNotificationsPlugin.show(

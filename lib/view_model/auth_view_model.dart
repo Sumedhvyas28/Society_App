@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:society_app/data/response/api_response.dart';
+import 'package:society_app/models/user_data.dart';
 import 'package:society_app/repository/auth_repo.dart';
 import 'package:society_app/utils/utils.dart';
+import 'package:society_app/view_model/user_session.dart';
 
 class AuthViewModel with ChangeNotifier {
   final _myrepo = AuthRepository();
@@ -23,133 +29,147 @@ class AuthViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loginRepo(dynamic data, BuildContext context) async {
-    setLoading(bool, true);
-    _myrepo.loginRepo(data).then((data1) {
-      setLoading(bool, false);
-      Utils.flushbarErrorMessage('login successfully', context);
-      // var data = jsonDecode(datas.body.toString());
-      print(data1);
-      if (data1['success'] == true) {
-        var token = data1['data']['token'];
-        var role = data1['data']['name'];
-        var message = data1['message'];
+  dynamic header = {
+    HttpHeaders.authorizationHeader: 'Bearer ${GlobalData().token}'
+  };
 
-        print('Token: $token');
-        print('Name: $role');
-        print('Message: $message');
+  dynamic header1 = {
+    HttpHeaders.contentTypeHeader: 'application/json',
+    HttpHeaders.authorizationHeader: 'Bearer ${GlobalData().token}'
+  };
 
-        // Navigate to the user dashboard based on the user's name
+  // =========================================================================================
 
-        // user
-        if (role == 'Society Member'
-            // && token == '63|B608exyr5lZ0Zmqg36jrkAcFOvuis3r2lnrTwGueec4e81eb'
-            ) {
-          GoRouter.of(context).go('/userdashboard');
-        }
+  ApiResponse<UserData> userData = ApiResponse.Loading();
 
-        //
-        else if (role == 'Society admin') {
-          GoRouter.of(context).go('/societyadminpage');
-        }
-
-        // bp
-        else if (role == 'Business Partner') {
-          GoRouter.of(context).go('/bpdashboard');
-        }
-
-        //super admin
-        else if (role == 'super admin') {
-          GoRouter.of(context).go('/superadmindashboard');
-        }
-
-        // vendor
-        else if (role == 'Society Member') {
-          GoRouter.of(context).go('/vendorpage');
-        }
-
-        // security page
-        else if (role == 'Security Guard') {
-          GoRouter.of(context).go('/securitypage');
-        } else {
-          // Default case if the user name does not match
-          GoRouter.of(context).go('/defaultDashboard');
-        }
-
-        print('@L@##@@##@K');
-        print(data1.toString());
-      }
-    }).onError(
-      (error, stackTrace) {
-        setLoading(bool, false);
-        Utils.flushbarErrorMessage(error.toString(), context);
-        print('fqnfqfqnfn');
-      },
-    );
+  setUserData(ApiResponse<UserData> response) {
+    userData = response;
+    notifyListeners();
   }
 
-  Future<void> signRepo(dynamic data, BuildContext context) async {
-    setSignUpLoading(bool, true);
-    _myrepo.signUpRepo(data).then((data1) {
-      setSignUpLoading(bool, false);
-      Utils.flushbarErrorMessage('Sign Up successfully', context);
-      // var data = jsonDecode(datas.body.toString());
-      print(data1);
+  Future<void> getUserData() async {
+    setUserData(ApiResponse.Loading());
+    _myrepo.getUserDataRepo(header).then((value) {
+      setUserData(ApiResponse.completed(value));
+    }).onError((error, stackTrace) {
+      setUserData(ApiResponse.error(error.toString()));
+    });
+    notifyListeners();
+  }
+
+  Future<void> loginRepo(dynamic data, BuildContext context) async {
+    setLoading(bool, true);
+
+    _myrepo.loginRepo(data).then((data1) async {
+      print('Login Details $data1');
+
       if (data1['success'] == true) {
-        var token = data1['data']['token'];
-        var role = data1['data']['name'];
-        var message = data1['message'];
+        // Extract user details from data1
+        dynamic userData = {
+          "token": data1['data']['token'].toString(),
+          "name": data1['data']['name'].toString(),
+          "role": data1['data']['role'].toString(),
+        };
 
-        print('Token: $token');
-        print('Name: $role');
-        print('Message: $message');
+        // Store user data using Provider
+        await Provider.of<UserSession>(context, listen: false)
+            .storeUserData(userData);
 
-        // Navigate to the user dashboard based on the user's name
+        // Retrieve user role for navigation
+        final role = await Provider.of<UserSession>(context, listen: false)
+            .getUserRole();
+        navigateTo(role, context);
 
-        // user
-        if (role == 'Society Member'
-            // && token == '63|B608exyr5lZ0Zmqg36jrkAcFOvuis3r2lnrTwGueec4e81eb'
-            ) {
-          GoRouter.of(context).go('/userdashboard');
-        }
+        // Display success message
+        Utils.flushbarErrorMessage('User login successfully', context);
 
-        //
-        else if (role == 'Society admin') {
-          GoRouter.of(context).go('/societyadminpage');
-        }
+        setLoading(bool, false);
 
-        // bp
-        else if (role == 'Business Partner') {
-          GoRouter.of(context).go('/bpdashboard');
-        }
+        // Navigate based on user role
+      } else {
+        setLoading(bool, false);
 
-        //super admin
-        else if (role == 'super admin') {
-          GoRouter.of(context).go('/superadmindashboard');
-        }
-
-        // vendor
-        else if (role == 'Society Member') {
-          GoRouter.of(context).go('/vendorpage');
-        }
-
-        // security page
-        else if (role == 'Security Guard') {
-          GoRouter.of(context).go('/securitypage');
-        } else {
-          // Default case if the user name does not match
-          GoRouter.of(context).go('/defaultDashboard');
-        }
-
-        print('@L@##@@##@K');
-        print(data1.toString());
+        Utils.flushbarErrorMessage('Invalid login response', context);
       }
-    }).onError(
-      (error, stackTrace) {
+    }).onError((error, stackTrace) {
+      setLoading(bool, false);
+      Utils.flushbarErrorMessage('Wrong Credentials', context);
+      print('Error: $error');
+    });
+  }
+
+  Future<void> signUp(BuildContext context, dynamic data) async {
+    setSignUpLoading(bool, true);
+
+    _myrepo.signUpRepo(data).then((data1) async {
+      print('Sign-Up Details $data1');
+
+      if (data1['success'] == true) {
+        // Extract user data from the response
+        dynamic userData = {
+          "token": data1['data']['token'],
+          "name": data1['data']['name'],
+          "email":
+              data1['data']['email'] ?? '', // Email may or may not be provided
+          "role": data1['data']['role'],
+        };
+
+        // Store user data in UserSession
+        await Provider.of<UserSession>(context, listen: false)
+            .storeUserData(userData);
+
+        // Retrieve the user's role
+        final role = await Provider.of<UserSession>(context, listen: false)
+            .getUserRole();
+
         setSignUpLoading(bool, false);
-        Utils.flushbarErrorMessage(error.toString(), context);
-        print('fqnfqfqnfn');
-      },
-    );
+
+        // Navigate based on role
+        navigateTo(role, context);
+
+        Utils.flushbarErrorMessage('Sign Up successfully', context);
+      }
+    }).onError((error, stackTrace) {
+      setSignUpLoading(bool, false);
+      Utils.flushbarErrorMessage('Error: $error', context);
+      print('Sign-Up Error: $error');
+    });
+  }
+
+  ///////////////////////
+  void navigateTo(role, context) {
+    if (role == 'society_member'
+        // && token == '63|B608exyr5lZ0Zmqg36jrkAcFOvuis3r2lnrTwGueec4e81eb'
+        ) {
+      GoRouter.of(context).go('/userdashboard');
+    }
+
+    //
+    else if (role == 'Society admin') {
+      GoRouter.of(context).go('/societyadminpage');
+    }
+
+    // bp
+    else if (role == 'business_partner') {
+      GoRouter.of(context).go('/bpdashboard');
+    }
+
+    //super admin
+    else if (role == 'society_admin') {
+      GoRouter.of(context).go('/superadmindashboard');
+    }
+
+    // vendor
+    else if (role == 'vendor') {
+      GoRouter.of(context).go('/vendorpage');
+    }
+
+    // security page
+    else if (role == 'security_guard') {
+      GoRouter.of(context).go('/securitypage');
+    } else {
+      // Default case if the user name does not match
+      GoRouter.of(context).go('/defaultDashboard');
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/pages/bp_dashboard/bp_model.dart';
+import 'package:society_app/pages/bp_dashboard/more.dart';
 
 class BpDashboardpage extends StatefulWidget {
   const BpDashboardpage({super.key});
@@ -87,7 +88,13 @@ class _BpDashboardpageState extends State<BpDashboardpage>
                       color: Colors.black,
                       size: 40,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => bpMoreSection()),
+                      );
+                    },
                   ),
                 ],
               ),

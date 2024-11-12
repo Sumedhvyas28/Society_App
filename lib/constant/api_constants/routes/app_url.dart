@@ -3,4 +3,6 @@ class AppUrl {
 
   static var loginUrl = baseUrl + '/login';
   static var registerUrl = baseUrl + '/register';
+
+  static String userDataUrl = "$baseUrl/user";
 }

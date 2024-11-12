@@ -23,25 +23,25 @@ class _LoginPageState extends State<LoginPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  NotificationServices notificationServices = NotificationServices();
+  // NotificationServices notificationServices = NotificationServices();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    initialTask();
-  }
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   initialTask();
+  // }
 
-  void initialTask() {
-    notificationServices.requestNotificationPermission();
-    notificationServices.firebaseInit();
-    notificationServices.getDeviceToken().then(
-      (value) async {
-        print('device token');
-        print(value);
-      },
-    );
-  }
+  // void initialTask() {
+  //   notificationServices.requestNotificationPermission();
+  //   notificationServices.firebaseInit();
+  //   notificationServices.getDeviceToken().then(
+  //     (value) async {
+  //       print('device token');
+  //       print(value);
+  //     },
+  //   );
+  // }
 
   @override
   void dispose() {

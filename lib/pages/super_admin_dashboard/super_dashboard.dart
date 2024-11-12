@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/pages/society_admin_dashboard/more.dart';
 import 'package:society_app/pages/super_admin_dashboard/super_models.dart';
 
 class SuperDashboard extends StatefulWidget {
@@ -72,7 +73,12 @@ class _SuperDashboardState extends State<SuperDashboard> {
                       color: Colors.black,
                       size: 40,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SaMore()),
+                      );
+                    },
                   ),
                 ],
               ),
