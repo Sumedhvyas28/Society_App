@@ -27,6 +27,7 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
     notificationServices.getDeviceToken().then(
       (value) async {
         print('device token');
+        print('guard module');
         print(value);
       },
     );

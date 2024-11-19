@@ -5,4 +5,9 @@ class AppUrl {
   static var registerUrl = baseUrl + '/register';
 
   static String userDataUrl = "$baseUrl/user";
+
+  static String getVisitorSocietyUrl =
+      "https://stagging.intouchsoftwaresolution.com/api/society-buildings";
+  static String getVisitorSocietyBuildingUrl =
+      "https://stagging.intouchsoftwaresolution.com/api/building-users?building=A";
 }
