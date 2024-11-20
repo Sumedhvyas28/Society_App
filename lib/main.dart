@@ -7,6 +7,7 @@ import 'package:society_app/navigation/app_navigation.dart';
 import 'package:society_app/view_model/auth_view_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:society_app/view_model/guard/features.dart';
+import 'package:society_app/view_model/guard/message.dart';
 import 'package:society_app/view_model/user_session.dart';
 import 'firebase_options.dart';
 
@@ -38,6 +39,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => AuthViewModel()),
         ChangeNotifierProvider(create: (_) => UserSession()),
         ChangeNotifierProvider(create: (_) => GuardFeatures()),
+        ChangeNotifierProvider(create: (_) => MessageFeatures()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

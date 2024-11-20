@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/notification_services.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/more.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/sg_model.dart';
+import 'package:society_app/view_model/guard/features.dart';
 
 class SecurityDashboardpage extends StatefulWidget {
   const SecurityDashboardpage({super.key});
@@ -25,10 +27,13 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
     notificationServices.requestNotificationPermission();
     notificationServices.firebaseInit();
     notificationServices.getDeviceToken().then(
-      (value) async {
-        print('device token');
-        print('guard module');
-        print(value);
+      (value) {
+        if (value != null) {
+          Provider.of<GuardFeatures>(context, listen: false)
+              .updateDeviceTokenApi(value);
+        } else {
+          print('Device token is null');
+        }
       },
     );
   }

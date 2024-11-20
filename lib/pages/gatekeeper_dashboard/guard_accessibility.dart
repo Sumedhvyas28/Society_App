@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/models/guard/post_visitor_dart.dart';
 import 'package:society_app/res/component/guard/attachmen_section.dart';
 import 'package:society_app/res/component/guard/dropdown_section.dart';
 import 'package:society_app/res/component/guard/input_section.dart';
-import 'package:society_app/res/component/guard/send_notification.dart';
 import 'package:society_app/res/component/guard/visitor_section.dart';
 import 'package:society_app/view_model/guard/features.dart';
 
@@ -22,6 +22,13 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
   String? _selectedDuration;
 
   bool isDropdownDisabled = true;
+
+  TextEditingController societyMemberController = TextEditingController();
+  TextEditingController contactNumberController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController additonalNotesController = TextEditingController();
+  TextEditingController visitorNameController = TextEditingController();
+  TextEditingController purposeOfVisitController = TextEditingController();
 
   @override
   void initState() {
@@ -74,7 +81,7 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   DropdownSection(
-                    title: 'Visitor Name',
+                    title: 'Society Member',
                     items: guardFeatures.visitorNames, // Dynamic visitor names
                     selectedValue: _selectedVisitorName,
                     onChanged: isDropdownDisabled
@@ -91,11 +98,25 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   InputSection(
+                    controller: visitorNameController,
+                    title: 'Visitor Name',
+                    hintText: 'Enter your Visitor Name',
+                  ),
+                  SizedBox(height: screenWidth * 0.05),
+                  InputSection(
+                    controller: purposeOfVisitController,
+                    title: 'Purpose of Visit',
+                    hintText: 'Delivering packages for the resident',
+                  ),
+                  SizedBox(height: screenWidth * 0.05),
+                  InputSection(
+                    controller: societyMemberController,
                     title: 'Contact Number',
                     hintText: 'Enter your Contact Number',
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   InputSection(
+                    controller: dateController,
                     title: 'Date',
                     hintText: 'Enter Date',
                   ),
@@ -112,13 +133,61 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   InputSection(
+                    controller: additonalNotesController,
                     title: 'Additional Notes',
                     hintText: 'Any other relevant information',
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   AttachmentSection(),
                   SizedBox(height: screenWidth * 0.05),
-                  SizedBox(child: SendNotificationButton()),
+                  Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        final visitorData = Data(
+                          userName: "",
+                          visitorType: 'Vendor',
+                          visitorName: visitorNameController.text.toString(),
+                          purposeOfVisit:
+                              'Delivering packages for the resident',
+                          contactNumber: '1234567890',
+                          visitDate: '2024-11-06',
+                          expectedDuration: '2 hours',
+                          additionalNotes:
+                              'Visitor is from ABC Courier Services',
+                          status: 'Commented',
+                          commentMessage:
+                              'Please allow access only during working hours.',
+                          apartmentNo: 'A-2',
+                          address: '315 SHRI NAGAR EXT',
+                        );
+
+                        Provider.of<GuardFeatures>(context, listen: false)
+                            .postVisitorApi(visitorData)
+                            .then((_) {
+                          print('s yes ');
+                        }).onError(
+                          (error, stackTrace) {
+                            print('no');
+                            error.toString();
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Pallete.mainBtnClr,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.15, vertical: 16),
+                      ),
+                      child: Text(
+                        'Send Notification',
+                        style: TextStyle(
+                            fontSize: screenWidth * 0.04, color: Colors.white),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

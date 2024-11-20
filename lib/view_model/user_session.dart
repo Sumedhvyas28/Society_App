@@ -23,8 +23,7 @@ class UserSession with ChangeNotifier {
     final userData = await getUserData();
     if (userData != null) {
       GlobalData().updateUserData(
-        newId: userData['id'] ??
-            '', // For registration response, id may not be present
+        newId: userData['id'] ?? '',
         newName: userData['name'] ?? '',
         newEmail: userData['email'] ?? '',
         newPhnNo: userData['phone'] ?? '',

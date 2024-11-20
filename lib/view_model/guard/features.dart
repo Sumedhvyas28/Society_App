@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:society_app/models/device_token.dart';
+import 'package:society_app/models/guard/get_guard_names.dart';
+import 'package:society_app/models/guard/post_visitor_dart.dart';
 import 'package:society_app/repository/guard_repo.dart';
 
 class GuardFeatures with ChangeNotifier {
@@ -6,6 +9,18 @@ class GuardFeatures with ChangeNotifier {
 
   List<String> visitorBuildings = [];
   List<String> visitorNames = [];
+  postVisitorData? visitorResponse;
+  List<String> guardsName = [];
+
+  Future<void> getGuardNamesApi() async {
+    try {
+      guardsName = await _guardRepo.getGuardName();
+      print('success');
+      notifyListeners();
+    } catch (e) {
+      print('Error fetching new API data: $e');
+    }
+  }
 
   // Fetch building data
   Future<void> fetchVisitorBuildings() async {
@@ -24,6 +39,28 @@ class GuardFeatures with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error fetching visitor names: $e');
+    }
+  }
+
+  // add here postvisitapi
+
+  Future<void> postVisitorApi(Data visitorData) async {
+    try {
+      visitorResponse = await _guardRepo.postVisitorDetails(visitorData);
+      print('fqkfkkqkqfkfqkfq yes');
+      notifyListeners();
+    } catch (e) {
+      print('Error posting visitor details: $e');
+    }
+  }
+
+  Future<void> updateDeviceTokenApi(String deviceToken) async {
+    try {
+      final response = await _guardRepo.postDeviceToken(deviceToken);
+      print('Device token updated successfully');
+      notifyListeners();
+    } catch (e) {
+      print('Error posting device token: $e');
     }
   }
 }

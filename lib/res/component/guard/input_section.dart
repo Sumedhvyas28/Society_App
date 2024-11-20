@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:society_app/view_model/guard/features.dart';
 
 class InputSection extends StatelessWidget {
   final String title;
   final String hintText;
+  final controller;
 
   const InputSection({
     Key? key,
     required this.title,
     required this.hintText,
+    required this.controller,
   }) : super(key: key);
 
   @override

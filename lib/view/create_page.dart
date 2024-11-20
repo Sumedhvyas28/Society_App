@@ -109,21 +109,21 @@ class _SignUpPageState extends State<SignUpPage> {
                         const SizedBox(height: 20),
 
                         // Phone Number Text Field
-                        const Text(
-                          'Phone Number',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        const SizedBox(height: 10),
+                        // const Text(
+                        //   'Phone Number',
+                        //   style: TextStyle(fontSize: 16),
+                        // ),
+                        // const SizedBox(height: 10),
 
-                        TextField(
-                          decoration: InputDecoration(
-                            prefixIcon: const Icon(Icons.phone),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 20),
+                        // TextField(
+                        //   decoration: InputDecoration(
+                        //     prefixIcon: const Icon(Icons.phone),
+                        //     border: OutlineInputBorder(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(height: 20),
 
                         // Dropdown for Full Name
                         const Text(
