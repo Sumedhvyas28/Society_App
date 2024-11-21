@@ -6,6 +6,7 @@ import 'package:society_app/pages/gatekeeper_dashboard/guard_noitification.dart'
 import 'package:society_app/pages/gatekeeper_dashboard/more.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/sg_model.dart';
 import 'package:society_app/view_model/guard/features.dart';
+import 'package:society_app/view_model/user_session.dart';
 
 class SecurityDashboardpage extends StatefulWidget {
   const SecurityDashboardpage({super.key});
@@ -32,6 +33,8 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
         if (value != null) {
           Provider.of<GuardFeatures>(context, listen: false)
               .updateDeviceTokenApi(value);
+          print(value);
+          print(GlobalData().token);
         } else {
           print('Device token is null');
         }

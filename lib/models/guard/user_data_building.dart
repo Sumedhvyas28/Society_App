@@ -1,10 +1,10 @@
-class buildingUser {
+class getBuildingPeople {
   bool? success;
   List<Users>? users;
 
-  buildingUser({this.success, this.users});
+  getBuildingPeople({this.success, this.users});
 
-  buildingUser.fromJson(Map<String, dynamic> json) {
+  getBuildingPeople.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['users'] != null) {
       users = <Users>[];
@@ -25,7 +25,7 @@ class buildingUser {
 }
 
 class Users {
-  String? userId;
+  int? userId;
   String? userName;
   String? apartmentNo;
   String? address;

@@ -7,6 +7,7 @@ import 'package:society_app/data/response/api_response.dart';
 import 'package:society_app/models/user_data.dart';
 import 'package:society_app/repository/auth_repo.dart';
 import 'package:society_app/utils/utils.dart';
+import 'package:society_app/view_model/get_main.dart';
 import 'package:society_app/view_model/user_session.dart';
 
 class AuthViewModel with ChangeNotifier {
@@ -82,6 +83,8 @@ class AuthViewModel with ChangeNotifier {
 
         // Display success message
         Utils.flushbarErrorMessage('User login successfully', context);
+        print(authToken);
+        print('token');
 
         setLoading(bool, false);
 

@@ -1,14 +1,19 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:society_app/constant/api_constants/routes/app_url.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/models/guard/message/post_guard_message.dart';
+import 'package:society_app/models/guard/get_guard_names.dart';
 import 'package:society_app/res/component/guard/attachmen_section.dart';
 import 'package:society_app/res/component/guard/dropdown_section.dart';
 import 'package:society_app/res/component/guard/input_section.dart';
-import 'package:society_app/res/component/guard/visitor_section.dart';
 import 'package:society_app/view_model/guard/features.dart';
 import 'package:society_app/view_model/guard/message.dart';
+import 'package:http/http.dart' as http;
+import 'package:society_app/view_model/user_session.dart';
 
 class GuardMessagePage extends StatefulWidget {
   const GuardMessagePage({super.key});
@@ -48,6 +53,45 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
     final guardFeatures = Provider.of<GuardFeatures>(context);
     final guardMessageFeatures = Provider.of<MessageFeatures>(context);
 
+    String? _selectedVisitorName;
+
+    Future<List<Data>> getPost() async {
+      try {
+        final response = await http.get(
+          Uri.parse(AppUrl.getGuardNameUrl),
+          headers: {
+            "authorization": "Bearer ${GlobalData().token}",
+            "Content-Type": "application/json",
+          },
+        );
+
+        if (response.statusCode == 200) {
+          final body = json.decode(response.body);
+
+          // Log the response to inspect its structure
+          print('Response Body: $body');
+
+          // Check if 'data' or 'Data' exists and is a list
+          if (body['data'] != null) {
+            final guardList = body['data'] as List<dynamic>;
+            return guardList.map((e) {
+              return Data.fromJson(e as Map<String, dynamic>);
+            }).toList();
+          } else {
+            throw Exception('Data key is null or missing');
+          }
+        } else {
+          throw Exception('Failed to fetch data: ${response.statusCode}');
+        }
+      } on SocketException {
+        throw Exception('No internet connection');
+      } catch (e) {
+        throw Exception('Error fetching data: $e');
+      }
+    }
+
+    var selectedValue;
+
     return Scaffold(
       appBar: CustomAppBar(title: 'Guard Accessibility'),
       backgroundColor: Pallete.mainDashColor,
@@ -61,19 +105,33 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  DropdownSection(
-                    title: 'Guard to connect',
-                    items: guardFeatures.guardsName, // Dynamic buildings
-                    selectedValue: _selectedBuilding,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedBuilding = value;
-                        isDropdownDisabled = false;
-                      });
-
-                      // Fetch visitor names for the selected building
-                      if (value != null) {
-                        GuardFeatures().fetchVisitorNames(value);
+                  FutureBuilder<List<Data>>(
+                    future: getPost(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      } else if (snapshot.hasError) {
+                        print('Error: ${snapshot.error}');
+                        return Text('Error: ${snapshot.error}');
+                      } else if (snapshot.hasData &&
+                          snapshot.data!.isNotEmpty) {
+                        return DropdownButton<String>(
+                          hint: Text('Guard Name '),
+                          isExpanded: true,
+                          value: selectedValue,
+                          items: snapshot.data!.map((Data data) {
+                            return DropdownMenuItem<String>(
+                              value: data.toGuardId,
+                              child: Text(data.name.toString() ?? 'Unknown'),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            selectedValue = value!;
+                            setState(() {});
+                          },
+                        );
+                      } else {
+                        return Text('No buildings available');
                       }
                     },
                   ),
@@ -114,26 +172,26 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        final postMessageData = Data(
-                          toGuardId: 98,
-                          message: "Some visitor came looks suspicious",
-                          urgencyLevel: "medium",
-                          category: "reminder",
-                          date: "2024-11-10",
-                          additionalNotes: "Check in by 8:00 PM.",
-                          attachment: null,
-                        );
+                        // final postMessageData = Data(
+                        //   toGuardId: 98,
+                        //   message: "Some visitor came looks suspicious",
+                        //   urgencyLevel: "medium",
+                        //   category: "reminder",
+                        //   date: "2024-11-10",
+                        //   additionalNotes: "Check in by 8:00 PM.",
+                        //   attachment: null,
+                        // );
 
-                        Provider.of<MessageFeatures>(context, listen: false)
-                            .postGuardMessageApi(postMessageData)
-                            .then((_) {
-                          print('s yes ');
-                        }).onError(
-                          (error, stackTrace) {
-                            print('no');
-                            error.toString();
-                          },
-                        );
+                        // Provider.of<MessageFeatures>(context, listen: false)
+                        //     .postGuardMessageApi(postMessageData)
+                        //     .then((_) {
+                        //   print('s yes ');
+                        // }).onError(
+                        //   (error, stackTrace) {
+                        //     print('no');
+                        //     error.toString();
+                        //   },
+                        // );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Pallete.mainBtnClr,

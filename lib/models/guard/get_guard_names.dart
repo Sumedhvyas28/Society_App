@@ -1,21 +1,47 @@
-class getGuardNames {
+class getGuardName {
   bool? success;
   String? message;
-  List<String>? data;
+  List<Data>? data;
 
-  getGuardNames({this.success, this.message, this.data});
+  getGuardName({this.success, this.message, this.data});
 
-  getGuardNames.fromJson(Map<String, dynamic> json) {
+  getGuardName.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
-    data = json['data'].cast<String>();
+    if (json['data'] != null) {
+      data = <Data>[];
+      json['data'].forEach((v) {
+        data!.add(new Data.fromJson(v));
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['success'] = this.success;
     data['message'] = this.message;
-    data['data'] = this.data;
+    if (this.data != null) {
+      data['data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}
+
+class Data {
+  String? toGuardId;
+  String? name;
+
+  Data({this.toGuardId, this.name});
+
+  Data.fromJson(Map<String, dynamic> json) {
+    toGuardId = json['to_guard_id'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['to_guard_id'] = this.toGuardId;
+    data['name'] = this.name;
     return data;
   }
 }

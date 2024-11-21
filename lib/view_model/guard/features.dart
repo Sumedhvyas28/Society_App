@@ -77,16 +77,6 @@ class GuardFeatures with ChangeNotifier {
 
   // add here postvisitapi
 
-  Future<void> postVisitorApi(Data visitorData) async {
-    try {
-      visitorResponse = await _guardRepo.postVisitorDetails(visitorData);
-      print('fqkfkkqkqfkfqkfq yes');
-      notifyListeners();
-    } catch (e) {
-      print('Error posting visitor details: $e');
-    }
-  }
-
   Future<void> updateDeviceTokenApi(String deviceToken) async {
     try {
       final response = await _guardRepo.postDeviceToken(deviceToken);
