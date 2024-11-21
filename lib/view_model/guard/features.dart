@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:society_app/models/device_token.dart';
 import 'package:society_app/models/guard/get_guard_names.dart';
 import 'package:society_app/models/guard/post_visitor_dart.dart';
+import 'package:society_app/models/guard/visitor_data.dart';
 import 'package:society_app/repository/guard_repo.dart';
 
 class GuardFeatures with ChangeNotifier {
@@ -11,6 +12,38 @@ class GuardFeatures with ChangeNotifier {
   List<String> visitorNames = [];
   postVisitorData? visitorResponse;
   List<String> guardsName = [];
+
+  get visitorBuildingsdata => null;
+  List<Buildings> _buildings = [];
+  String? _selectedBuildingId;
+  bool _isLoading = false;
+  String? _errorMessage;
+
+  List<Buildings> get buildings => _buildings;
+  String? get selectedBuildingId => _selectedBuildingId;
+  bool get isLoading => _isLoading;
+  String? get errorMessage => _errorMessage;
+
+  Future<void> fetchBuildings() async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      _buildings = await _guardRepo.getBuilding();
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      _errorMessage = e.toString();
+      notifyListeners();
+    }
+  }
+
+  void selectBuilding(String? buildingId) {
+    _selectedBuildingId = buildingId;
+    notifyListeners();
+  }
 
   Future<void> getGuardNamesApi() async {
     try {
@@ -28,7 +61,7 @@ class GuardFeatures with ChangeNotifier {
       visitorBuildings = await _guardRepo.getVisitorSocietyData();
       notifyListeners();
     } catch (e) {
-      print('Error fetching buildings: $e');
+      print('Error fetching visitor buildings: $e');
     }
   }
 

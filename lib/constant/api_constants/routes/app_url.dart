@@ -6,10 +6,9 @@ class AppUrl {
 
   static String userDataUrl = "$baseUrl/user";
 
-  static String getVisitorSocietyUrl =
-      "https://stagging.intouchsoftwaresolution.com/api/society-buildings";
+  static String getVisitorSocietyUrl = baseUrl + "/society-buildings";
   static String getVisitorSocietyBuildingUrl =
-      "https://stagging.intouchsoftwaresolution.com/api/building-users?building=A";
+      "https://stagging.intouchsoftwaresolution.com/api/building-users";
 
   static String postVisitorUrl =
       "https://stagging.intouchsoftwaresolution.com/api/visitor";

@@ -1,13 +1,20 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:society_app/constant/api_constants/routes/app_url.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/models/guard/post_visitor_dart.dart';
+import 'package:society_app/models/guard/visitor_data.dart';
 import 'package:society_app/res/component/guard/attachmen_section.dart';
 import 'package:society_app/res/component/guard/dropdown_section.dart';
 import 'package:society_app/res/component/guard/input_section.dart';
 import 'package:society_app/res/component/guard/visitor_section.dart';
 import 'package:society_app/view_model/guard/features.dart';
+import 'package:http/http.dart' as http;
+import 'package:society_app/view_model/user_session.dart';
 
 class GuardAccessibilityPage extends StatefulWidget {
   const GuardAccessibilityPage({super.key});
@@ -17,7 +24,9 @@ class GuardAccessibilityPage extends StatefulWidget {
 }
 
 class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
-  String? _selectedBuilding;
+  int? _selectedBuildingId;
+
+  String? _selectedBuilding; // or int? based on the approach used
   String? _selectedVisitorName;
   String? _selectedDuration;
 
@@ -63,21 +72,8 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                     onSecondCheckboxChanged: (_) {},
                   ),
                   SizedBox(height: screenWidth * 0.05),
-                  DropdownSection(
-                    title: 'Building',
-                    items: guardFeatures.visitorBuildings, // Dynamic buildings
-                    selectedValue: _selectedBuilding,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedBuilding = value;
-                        isDropdownDisabled = false;
-                      });
-
-                      // Fetch visitor names for the selected building
-                      if (value != null) {
-                        guardFeatures.fetchVisitorNames(value);
-                      }
-                    },
+                  Column(
+                    children: [],
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   DropdownSection(
