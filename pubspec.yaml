@@ -89,12 +89,13 @@ flutter:
     - assets/img/bp/
     - assets/img/super/
     - assets/img/login_page.png
+    - assets/img/more/
     
     - assets/navbar/
     - assets/animation/
     
 
-  
+
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

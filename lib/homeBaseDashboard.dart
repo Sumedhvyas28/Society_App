@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/pages/society_admin_dashboard/sa_dashboard.dart';
-import 'package:society_app/pages/user_dashboard/modules/dashbord.dart'; // Ensure this import is correct
+import 'package:society_app/pages/modules/dashbord.dart'; // Ensure this import is correct
 
 class HomebasePage extends StatefulWidget {
   const HomebasePage({super.key});

@@ -3,10 +3,20 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
-class NotificationServices {
+class NotificationServices with ChangeNotifier {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
+
+  final List<RemoteMessage> _notificationList = []; // Store notifications
+
+  List<RemoteMessage> get notifications =>
+      _notificationList; // Expose notifications
+
+  void addNotificationToList(RemoteMessage message) {
+    _notificationList.add(message);
+    notifyListeners(); // Notify listeners after adding to the list
+  }
 
   void initLocalNotification(
       BuildContext context, RemoteMessage message) async {
@@ -48,6 +58,7 @@ class NotificationServices {
       print('/////////');
       print(message.notification!.title.toString());
       print(message.notification!.body.toString());
+      addNotificationToList(message); // Add notification to the list
       showNotification(message);
     });
   }
@@ -65,7 +76,7 @@ class NotificationServices {
       importance: Importance.high,
       priority: Priority.high,
       ticker: 'ticker',
-      icon: '@mipmap/ic_launcher', // Add this line
+      icon: '@mipmap/ic_launcher',
     );
 
     DarwinNotificationDetails darwinNotificationDetails =

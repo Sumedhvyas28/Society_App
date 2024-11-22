@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/notification_services.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/edit_profile.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/guard_noitification.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/more.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/sg_model.dart';
@@ -62,9 +63,18 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.person,
-                    size: 35,
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => EditProfilePage()),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.person,
+                      size: 40,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   const Expanded(

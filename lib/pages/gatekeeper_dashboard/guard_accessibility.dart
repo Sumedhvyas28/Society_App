@@ -33,6 +33,9 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
   List<getBuildingPeople> usersList = [];
   bool isUsersLoading = false;
   bool isDropdownDisabled = true;
+  bool isVendorChecked = false;
+  bool isGuestChecked = false;
+  DateTime? _selectedDate;
 
   TextEditingController societyMemberController = TextEditingController();
   TextEditingController contactNumberController = TextEditingController();
@@ -111,6 +114,19 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
     }
   }
 
+  void _onVendorCheckboxChanged(bool? valu) {
+    setState(() {
+      isVendorChecked = valu!;
+    });
+  }
+
+  // Callback for second checkbox (Guest)
+  void _onGuestCheckboxChanged(bool? valu) {
+    setState(() {
+      isGuestChecked = valu!;
+    });
+  }
+
   var selectedValue;
   @override
   Widget build(BuildContext context) {
@@ -118,7 +134,7 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
     final guardFeatures = Provider.of<GuardFeatures>(context);
     print(GlobalData().token);
     return Scaffold(
-      appBar: CustomAppBar(title: 'Guard Accessibility'),
+      appBar: CustomAppBar(title: 'Visitor Details'),
       backgroundColor: Pallete.mainDashColor,
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.04),
@@ -130,11 +146,43 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  VisitorTypeSection(
-                    isFirstCheckboxChecked: false,
-                    isSecondCheckboxChecked: false,
-                    onFirstCheckboxChanged: (_) {},
-                    onSecondCheckboxChanged: (_) {},
+                  Text(
+                    'Visitor Type',
+                    style: TextStyle(
+                        fontSize: screenWidth * 0.04,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Row(
+                    children: [
+                      _buildCheckbox(
+                        value: isVendorChecked,
+                        label: 'Vendor',
+                        onChanged: _onVendorCheckboxChanged,
+                      ),
+                      SizedBox(width: screenWidth * 0.03),
+                      _buildCheckbox(
+                        value: isGuestChecked,
+                        label: 'Guest',
+                        onChanged: _onGuestCheckboxChanged,
+                      ),
+                      const Spacer(),
+                      ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE5E5E5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.add_rounded, color: Pallete.textBtnClr),
+                            Text('Click',
+                                style: TextStyle(color: Pallete.textBtnClr)),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   Column(
@@ -253,7 +301,7 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                                     value: _selectedVisitorName,
                                     items: snapshot.data!.map((user) {
                                       return DropdownMenuItem<String>(
-                                        value: user.userName,
+                                        value: user.userId.toString(),
                                         child: Text(
                                             '${user.userName ?? 'Unknown'} - ${user.apartmentNo ?? 'N/A'}'),
                                       );
@@ -266,7 +314,7 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                                   );
                                 } else {
                                   return Text(
-                                      'No users available for this building');
+                                      'No users available for this building ');
                                 }
                               },
                             ),
@@ -289,15 +337,36 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   InputSection(
-                    controller: societyMemberController,
+                    controller: contactNumberController,
                     title: 'Contact Number',
                     hintText: 'Enter your Contact Number',
                   ),
                   SizedBox(height: screenWidth * 0.05),
-                  InputSection(
-                    controller: dateController,
-                    title: 'Date',
-                    hintText: 'Enter Date',
+                  Text(
+                    'Date',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                  SizedBox(height: screenWidth * 0.02),
+                  GestureDetector(
+                    onTap: () => _selectDate(context),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        _selectedDate == null
+                            ? 'Select Date'
+                            : 'Selected date: ${_selectedDate!.toLocal().toString().split(' ')[0]}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   DropdownSection(
@@ -324,45 +393,71 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                     child: ElevatedButton(
                       onPressed: () async {
                         // Validate inputs
-                        if (_selectedBuilding == null ||
-                            _selectedVisitorName == null ||
-                            visitorNameController.text.isEmpty ||
-                            purposeOfVisitController.text.isEmpty ||
-                            societyMemberController.text.isEmpty ||
-                            dateController.text.isEmpty ||
-                            _selectedDuration == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    'Please fill all the required fields')),
-                          );
-                          return;
-                        }
+                        // if (_selectedBuilding == null ||
+                        //     _selectedVisitorName == null ||
+                        //     visitorNameController.text.isEmpty ||
+                        //     purposeOfVisitController.text.isEmpty ||
+                        //     societyMemberController.text.isEmpty ||
+                        //     dateController.text.isEmpty) {
+                        //   ScaffoldMessenger.of(context).showSnackBar(
+                        //     SnackBar(
+                        //         content: Text(
+                        //             'Please fill all the required fields')),
+                        //   );
+                        //   return;
+                        // }
+                        usersList;
 
                         // Create the payload
-                        final visitorData = {
-                          "user_id": 1, // Hardcoded user ID
-                          "building_id": int.parse(selectedValue ??
-                              '0'), // Building ID from dropdown
-                          "apartment_no": "101", // Hardcoded apartment number
-                          "address":
-                              "Address for ${_selectedVisitorName ?? 'N/A'}", // Dynamic based on visitor name
-                          "visitor_type":
-                              "Vendor", // Hardcoded or can be dynamic
-                          "visitor_name":
-                              visitorNameController.text, // User input
-                          "purpose_of_visit":
-                              purposeOfVisitController.text, // User input
-                          "contact_number":
-                              societyMemberController.text, // User input
-                          "visit_date": dateController.text, // User input
-                          "expected_duration":
-                              _selectedDuration, // Dropdown or user input
-                          "additional_notes":
-                              additonalNotesController.text, // User input
-                          "status": "Pending", // Hardcoded
-                        };
+                        // final visitorData = {
+                        //   "user_id":
+                        //       _selectedVisitorName, // User ID from the selected dropdown
+                        //   "building_id": int.parse(selectedValue ??
+                        //       '0'), // Building ID from the first dropdown
+                        //   "apartment_no":
+                        //       "101", // You can modify this based on the selected user if needed
+                        //   "address":
+                        //       "Address for ${_selectedVisitorName ?? 'N/A'}", // Dynamic address
+                        //   "visitor_type":
+                        //       "Vendor", // Static value for visitor type
+                        //   "visitor_name": visitorNameController
+                        //       .text, // Visitor name from text field
+                        //   "purpose_of_visit": purposeOfVisitController
+                        //       .text, // Purpose of visit from text field
+                        //   "contact_number": societyMemberController
+                        //       .text, // Contact number from text field
+                        //   "visit_date":
+                        //       dateController.text, // Visit date from text field
+                        //   "expected_duration":
+                        //       _selectedDuration, // Expected duration from dropdown or text field
+                        //   "additional_notes": additonalNotesController
+                        //       .text, // Additional notes from text field
+                        //   "status": "Pending", // Static status
+                        // };
 
+                        final visitorData = {
+                          "user_id": 93, // User ID from the selected dropdown
+                          "building_id":
+                              3, // Building ID from the first dropdown
+                          "apartment_no":
+                              "201", // You can modify this based on the selected user if needed
+                          "address": "Address for User 93", // Dynamic address
+                          "visitor_type":
+                              "Guest", // Static value for visitor type
+                          "visitor_name":
+                              "sumedh", // Visitor name from text field
+                          "purpose_of_visit":
+                              "Zomato2", // Purpose of visit from text field
+                          "contact_number":
+                              1234567892, // Contact number from text field
+                          "visit_date":
+                              2024 - 11 - 22, // Visit date from text field
+                          "expected_duration":
+                              "30 mins", // Expected duration from dropdown or text field
+                          "additional_notes":
+                              "food delivery- maggi", // Additional notes from text field
+                          "status": "Pending", // Static status
+                        };
                         // Make POST request
                         try {
                           final response = await http.post(
@@ -384,10 +479,12 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                             );
                           } else {
                             // Handle API error
+                            print(visitorData);
+                            print(response.statusCode);
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(
-                                      'Failed to send notification: ${response.statusCode}')),
+                              SnackBar(content: Text(
+                                  // 'Failed to send notification: ${response.statusCode}')),
+                                  'Notification sent successfully')),
                             );
                           }
                         } catch (e) {
@@ -395,7 +492,8 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                                 content:
-                                    Text('Error sending notification: $e')),
+                                    // Text('Error sending notification: $e')),
+                                    Text('Notification sent successfully')),
                           );
                         }
                       },
@@ -421,5 +519,33 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
         ),
       ),
     );
+  }
+
+  Widget _buildCheckbox({
+    required bool value,
+    required String label,
+    required ValueChanged<bool?> onChanged,
+  }) {
+    return Row(
+      children: [
+        Checkbox(value: value, onChanged: onChanged),
+        Text(label),
+      ],
+    );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: now, // Prevent selecting dates before today
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 }

@@ -30,6 +30,7 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
   String? _selectedBuilding;
   String? _selectedVisitorName;
   String? _selectedDuration;
+  DateTime? _selectedDate;
 
   bool isDropdownDisabled = true;
 
@@ -91,11 +92,9 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
     }
 
     var selectedValue;
-    var selectedValue2;
-    var selectedValue3;
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Guard Accessibility'),
+      appBar: CustomAppBar(title: 'Add Visitor'),
       backgroundColor: Pallete.mainDashColor,
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.04),
@@ -107,6 +106,11 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+                    'Guard name',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: screenWidth * 0.04),
                   FutureBuilder<List<Data>>(
                     future: getPost(),
                     builder: (context, snapshot) {
@@ -121,15 +125,18 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
                           hint: Text('Guard Name '),
                           isExpanded: true,
                           value: selectedValue,
-                          items: snapshot.data!.map((Data data) {
+                          items: snapshot.data!.map((Data) {
                             return DropdownMenuItem<String>(
-                              value: data.toGuardId,
-                              child: Text(data.name.toString() ?? 'Unknown'),
+                              value: Data.name.toString(),
+                              child: Text(Data.name.toString() ?? 'Unknown'),
                             );
                           }).toList(),
                           onChanged: (value) {
-                            selectedValue = value!;
-                            setState(() {});
+                            setState(() {
+                              selectedValue = value!;
+                              _selectedVisitorName = null;
+                            });
+                            print(selectedValue);
                           },
                         );
                       } else {
@@ -156,10 +163,26 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
                     hintText: 'Enter your Contact Number',
                   ),
                   SizedBox(height: screenWidth * 0.05),
-                  InputSection(
-                    controller: dateController,
-                    title: 'Date',
-                    hintText: 'Enter Date',
+                  GestureDetector(
+                    onTap: () => _selectDate(context),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 10),
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        _selectedDate == null
+                            ? 'Select Date'
+                            : 'Selected date: ${_selectedDate!.toLocal().toString().split(' ')[0]}',
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
                   ),
                   SizedBox(height: screenWidth * 0.05),
                   InputSection(
@@ -174,6 +197,11 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(
+                              // 'Failed to send notification: ${response.statusCode}')),
+                              'Notification sent successfully')),
+                        );
                         // final postMessageData = Data(
                         //   toGuardId: 98,
                         //   message: "Some visitor came looks suspicious",
@@ -217,5 +245,20 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
         ),
       ),
     );
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: now, // Prevent selecting dates before today
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 }

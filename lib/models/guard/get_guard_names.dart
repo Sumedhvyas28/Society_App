@@ -28,7 +28,7 @@ class getGuardName {
 }
 
 class Data {
-  String? toGuardId;
+  int? toGuardId;
   String? name;
 
   Data({this.toGuardId, this.name});

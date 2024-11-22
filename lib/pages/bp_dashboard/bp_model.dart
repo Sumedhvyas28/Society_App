@@ -1,5 +1,5 @@
-import 'package:society_app/pages/user_dashboard/modules/labour%20module/labour_page.dart';
-import 'package:society_app/pages/user_dashboard/modules/shop%20module/shop_landing.dart';
+import 'package:society_app/pages/modules/labour%20module/labour_page.dart';
+import 'package:society_app/pages/modules/shop%20module/shop_landing.dart';
 
 final List<Map<String, dynamic>> bpGridItems = [
   {
