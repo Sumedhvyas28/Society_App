@@ -91,6 +91,8 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
     }
 
     var selectedValue;
+    var selectedValue2;
+    var selectedValue3;
 
     return Scaffold(
       appBar: CustomAppBar(title: 'Guard Accessibility'),
