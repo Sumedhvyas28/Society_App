@@ -10,6 +10,8 @@ import 'package:society_app/constant/api_constants/routes/app_url.dart';
 import 'package:society_app/view_model/user_session.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:http_parser/http_parser.dart';
+
 class GuardRepo {
   final BaseApiServices _apiServices = NetworkApiService();
 
@@ -137,36 +139,6 @@ class GuardRepo {
     }
   }
 
-  // Post visitor details API
-  Future<postVisitorData> postVisitorDetails(Data visitorData) async {
-    try {
-      Map<String, String> headers = {
-        "authorization": "Bearer ${GlobalData().token}",
-        "Content-Type": "application/json",
-      };
-
-      final body = jsonEncode(visitorData.toJson());
-
-      final response = await _apiServices.getPostApiWithHeaderResponse(
-        AppUrl.postVisitorUrl,
-        body,
-        headers,
-      );
-
-      if (response != null) {
-        print(response['success']);
-        print(response['message']);
-
-        return postVisitorData.fromJson(response);
-      } else {
-        throw Exception('Error: No response from the server');
-      }
-    } catch (e) {
-      print(GlobalData().token);
-      throw Exception('Error posting visitor details: $e');
-    }
-  }
-
   Future<postVisitorData> postDeviceToken(String deviceToken) async {
     try {
       Map<String, String> headers = {
@@ -196,6 +168,50 @@ class GuardRepo {
     } catch (e) {
       print(GlobalData().token);
       throw Exception('Error posting device token: $e');
+    }
+  }
+
+  Future<bool> postVisitorDataGuard(
+      Map<String, String> visitorData, File? imageFile) async {
+    final headers = {
+      "Authorization": "Bearer ${GlobalData().token}",
+      "Content-Type": "application/x-www-form-urlencoded",
+    };
+
+    try {
+      var uri = Uri.parse(AppUrl.postVisitorUrl);
+
+      // Create multipart request
+      var request = http.MultipartRequest('POST', uri)..headers.addAll(headers);
+
+      // Add visitor data fields to the request
+      visitorData.forEach((key, value) {
+        request.fields[key] = value;
+      });
+
+      // Add image file if present
+      if (imageFile != null) {
+        var file = await http.MultipartFile.fromPath(
+            'attachment', imageFile.path,
+            contentType:
+                MediaType('image', 'jpeg') // Update content type if needed
+            );
+        request.files.add(file);
+      }
+
+      // Send the request
+      var response = await request.send();
+
+      if (response.statusCode == 201) {
+        print('Visitor data posted successfully');
+        return true;
+      } else {
+        print('Failed to post visitor data: ${response.stream}');
+        return false;
+      }
+    } catch (e) {
+      print('Error posting visitor data: $e');
+      throw Exception('Error posting visitor data');
     }
   }
 }

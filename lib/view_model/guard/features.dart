@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:society_app/models/device_token.dart';
 import 'package:society_app/models/guard/get_guard_names.dart';
@@ -7,6 +9,12 @@ import 'package:society_app/repository/guard_repo.dart';
 
 class GuardFeatures with ChangeNotifier {
   final GuardRepo _guardRepo = GuardRepo();
+
+  bool _isPosting = false;
+  String? _postError;
+
+  bool get isPosting => _isPosting;
+  String? get postError => _postError;
 
   List<String> visitorBuildings = [];
   List<String> visitorNames = [];
@@ -84,6 +92,28 @@ class GuardFeatures with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       print('Error posting device token: $e');
+    }
+  }
+
+  Future<void> postVisitorNotification(
+      Map<String, String> visitorData, File? imageFile) async {
+    _isPosting = true;
+    _postError = null;
+    notifyListeners();
+
+    try {
+      final isSuccess =
+          await _guardRepo.postVisitorDataGuard(visitorData, imageFile);
+      if (isSuccess) {
+        print('Visitor notification posted successfully');
+      } else {
+        _postError = 'Failed to send visitor notification';
+      }
+    } catch (e) {
+      _postError = e.toString();
+    } finally {
+      _isPosting = false;
+      notifyListeners();
     }
   }
 }

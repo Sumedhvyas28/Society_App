@@ -4,7 +4,7 @@ import 'package:society_app/view_model/guard/features.dart';
 class InputSection extends StatelessWidget {
   final String title;
   final String hintText;
-  final controller;
+  final TextEditingController controller;
 
   const InputSection({
     Key? key,

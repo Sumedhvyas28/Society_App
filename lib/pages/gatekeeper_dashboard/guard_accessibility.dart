@@ -15,7 +15,11 @@ import 'package:society_app/res/component/guard/input_section.dart';
 import 'package:society_app/res/component/guard/visitor_section.dart';
 import 'package:society_app/view_model/guard/features.dart';
 import 'package:http/http.dart' as http;
+import 'package:society_app/view_model/guard/userProvider.dart';
 import 'package:society_app/view_model/user_session.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
 class GuardAccessibilityPage extends StatefulWidget {
   const GuardAccessibilityPage({super.key});
@@ -29,6 +33,7 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
 
   String? _selectedBuilding; // or int? based on the approach used
   String? _selectedVisitorName;
+  String? _selectedVisitorAddress;
   String? _selectedDuration;
   List<getBuildingPeople> usersList = [];
   bool isUsersLoading = false;
@@ -36,13 +41,18 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
   bool isVendorChecked = false;
   bool isGuestChecked = false;
   DateTime? _selectedDate;
+  String isImageUploade = "";
+  File? _imageFile;
+  final ImagePicker _picker = ImagePicker();
+  String? _base64Image;
 
-  TextEditingController societyMemberController = TextEditingController();
-  TextEditingController contactNumberController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  TextEditingController additonalNotesController = TextEditingController();
-  TextEditingController visitorNameController = TextEditingController();
-  TextEditingController purposeOfVisitController = TextEditingController();
+  final TextEditingController _contactNumberController =
+      TextEditingController();
+  final TextEditingController _additonalNotesController =
+      TextEditingController();
+  final TextEditingController _visitorNameController = TextEditingController();
+  final TextEditingController _purposeOfVisitController =
+      TextEditingController();
 
   @override
   void initState() {
@@ -114,17 +124,43 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
     }
   }
 
-  void _onVendorCheckboxChanged(bool? valu) {
+  void _onVendorCheckboxChanged(bool? value) {
     setState(() {
-      isVendorChecked = valu!;
+      isVendorChecked = value ?? false;
+      if (isVendorChecked) {
+        isGuestChecked = false; // Uncheck Guest if Vendor is checked
+      }
     });
   }
 
-  // Callback for second checkbox (Guest)
-  void _onGuestCheckboxChanged(bool? valu) {
+  void _onGuestCheckboxChanged(bool? value) {
     setState(() {
-      isGuestChecked = valu!;
+      isGuestChecked = value ?? false;
+      if (isGuestChecked) {
+        isVendorChecked = false; // Uncheck Vendor if Guest is checked
+      }
     });
+  }
+
+  Future<void> _takePicture() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      final directory = await getApplicationDocumentsDirectory();
+      final name = DateTime.now().millisecondsSinceEpoch.toString();
+      final imagePath = '${directory.path}/$name.jpg';
+
+      // Save the image to the file system
+      final File storedImage = await File(image.path).copy(imagePath);
+
+      setState(() {
+        _imageFile = storedImage; // Store the image file
+      });
+
+      print("Image saved at: ${storedImage.path}");
+    } else {
+      print("No image selected.");
+    }
   }
 
   var selectedValue;
@@ -144,376 +180,418 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
             child: Padding(
               padding: EdgeInsets.all(screenWidth * 0.04),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Visitor Type',
-                    style: TextStyle(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Visitor Type',
+                      style: TextStyle(
+                          fontSize: screenWidth * 0.04,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: [
+                        _buildCheckbox(
+                          value: isVendorChecked,
+                          label: 'Vendor',
+                          onChanged: _onVendorCheckboxChanged,
+                        ),
+                        SizedBox(width: screenWidth * 0.03),
+                        _buildCheckbox(
+                          value: isGuestChecked,
+                          label: 'Guest',
+                          onChanged: _onGuestCheckboxChanged,
+                        ),
+                        const Spacer(),
+                        ElevatedButton(
+                          onPressed: () {},
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFE5E5E5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.add_rounded,
+                                  color: Pallete.textBtnClr),
+                              Text('Click',
+                                  style: TextStyle(color: Pallete.textBtnClr)),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                    SizedBox(height: screenWidth * 0.05),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Container for Building Dropdown
+                        Container(
+                          padding: EdgeInsets.all(12),
+                          margin: EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                offset: Offset(0, 3), // Shadow position
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Select Building',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              FutureBuilder<List<Buildings>>(
+                                future: getPost(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else if (snapshot.hasData &&
+                                      snapshot.data!.isNotEmpty) {
+                                    return DropdownButton<String>(
+                                      hint: Text('Select Building'),
+                                      isExpanded: true,
+                                      value: selectedValue,
+                                      items: snapshot.data!.map((building) {
+                                        return DropdownMenuItem<String>(
+                                          value: building.buildingId.toString(),
+                                          child: Text(building.buildingName ??
+                                              'Unknown'),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          // print("value$value");
+                                          selectedValue = value!;
+                                          _selectedVisitorName =
+                                              null; // Reset the user dropdown
+                                          print("sev $selectedValue");
+                                        });
+                                      },
+                                    );
+                                  } else {
+                                    return Text('No buildings available');
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Container for User Dropdown
+                        Container(
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.2),
+                                spreadRadius: 1,
+                                blurRadius: 5,
+                                offset: Offset(0, 3), // Shadow position
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Select User',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              FutureBuilder<List<Users>>(
+                                future: selectedValue != null
+                                    ? fetchUsersForBuilding(
+                                        int.parse(selectedValue))
+                                    : Future.value([]),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  } else if (snapshot.hasData &&
+                                      snapshot.data!.isNotEmpty) {
+                                    return DropdownButton<String>(
+                                      hint: Text('Society Member Name'),
+                                      isExpanded: true,
+                                      value: _selectedVisitorName,
+                                      items: snapshot.data!.map((user) {
+                                        return DropdownMenuItem<String>(
+                                          value: user.userId.toString(),
+                                          child: Text(
+                                              '${user.userName ?? 'Unknown'} - ${user.apartmentNo ?? 'N/A'}'),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        final selectedUser = snapshot.data!
+                                            .firstWhere((user) =>
+                                                user.userId.toString() ==
+                                                value);
+
+                                        // Save user details using the provider
+                                        Provider.of<UserProvider>(context,
+                                                listen: false)
+                                            .setUserDetails(
+                                          selectedUser.userName ?? 'Unknown',
+                                          selectedUser.apartmentNo ?? 'N/A',
+                                          selectedUser.address ?? 'No address',
+                                        );
+                                        print(
+                                            'Selected user details: ${selectedUser.address}');
+
+                                        setState(() {
+                                          _selectedVisitorName = value!;
+                                        });
+                                      },
+                                    );
+                                  } else {
+                                    return Text(
+                                        'No users available for this building');
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: screenWidth * 0.05),
+                    Text(
+                      'Visitor Name',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
                         fontSize: screenWidth * 0.04,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  Row(
-                    children: [
-                      _buildCheckbox(
-                        value: isVendorChecked,
-                        label: 'Vendor',
-                        onChanged: _onVendorCheckboxChanged,
                       ),
-                      SizedBox(width: screenWidth * 0.03),
-                      _buildCheckbox(
-                        value: isGuestChecked,
-                        label: 'Guest',
-                        onChanged: _onGuestCheckboxChanged,
+                    ),
+                    SizedBox(height: screenWidth * 0.02),
+                    TextField(
+                      controller: _visitorNameController,
+                      decoration: InputDecoration(
+                          hintText: 'Enter Your Visitor Name',
+                          filled: true,
+                          focusColor: Colors.white,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          )),
+                    ),
+                    SizedBox(height: screenWidth * 0.05),
+                    Text(
+                      'Purpose of Visit',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.04,
                       ),
-                      const Spacer(),
-                      ElevatedButton(
-                        onPressed: () {},
+                    ),
+                    SizedBox(height: screenWidth * 0.02),
+                    TextField(
+                      controller: _purposeOfVisitController,
+                      decoration: InputDecoration(
+                        hintText: 'Delivering packages for the resident',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.05),
+                    Text(
+                      'Contact Number',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.04,
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.02),
+                    TextField(
+                      controller: _contactNumberController,
+                      decoration: InputDecoration(
+                        hintText: 'Enter your Contact Number',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.05),
+                    Text(
+                      'Date',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    SizedBox(height: screenWidth * 0.02),
+                    GestureDetector(
+                      onTap: () => _selectDate(context),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 15, horizontal: 10),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.grey,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          _selectedDate == null
+                              ? 'Select Date'
+                              : 'Selected date: ${_selectedDate!.toLocal().toString().split(' ')[0]}',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.05),
+                    DropdownSection(
+                      title: 'Expected Duration',
+                      items: ['30 mins', '1 Hour', '2 Hour', '3 Hour'],
+                      selectedValue: _selectedDuration,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedDuration = value;
+                        });
+                      },
+                    ),
+                    SizedBox(height: screenWidth * 0.05),
+                    Text(
+                      'Additonal Note',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: screenWidth * 0.04,
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.02),
+                    TextField(
+                      controller: _additonalNotesController,
+                      decoration: InputDecoration(
+                        hintText: 'Note',
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.05),
+                    Center(
+                      child: InkWell(
+                        onTap: () async {
+                          await _takePicture();
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.add_circle_rounded,
+                              color: Colors.black,
+                            ),
+                            SizedBox(width: screenWidth * 0.01),
+                            Text('Click a Picture'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: screenWidth * 0.05),
+                    Container(
+                      width: double.infinity,
+                      child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFE5E5E5),
+                          backgroundColor: Pallete.mainBtnClr,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.15, vertical: 16),
                         ),
-                        child: Row(
-                          children: [
-                            Icon(Icons.add_rounded, color: Pallete.textBtnClr),
-                            Text('Click',
-                                style: TextStyle(color: Pallete.textBtnClr)),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: screenWidth * 0.05),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Container for Building Dropdown
-                      Container(
-                        padding: EdgeInsets.all(12),
-                        margin: EdgeInsets.only(bottom: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: Offset(0, 3), // Shadow position
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Select Building',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            FutureBuilder<List<Buildings>>(
-                              future: getPost(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  return Text('Error: ${snapshot.error}');
-                                } else if (snapshot.hasData &&
-                                    snapshot.data!.isNotEmpty) {
-                                  return DropdownButton<String>(
-                                    hint: Text('Select Building'),
-                                    isExpanded: true,
-                                    value: selectedValue,
-                                    items: snapshot.data!.map((building) {
-                                      return DropdownMenuItem<String>(
-                                        value: building.buildingId.toString(),
-                                        child: Text(
-                                            building.buildingName ?? 'Unknown'),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedValue = value!;
-                                        _selectedVisitorName =
-                                            null; // Reset the user dropdown
-                                      });
-                                    },
-                                  );
-                                } else {
-                                  return Text('No buildings available');
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
+                        onPressed: () async {
+                          print(
+                              'Provider Address: ${Provider.of<UserProvider>(context, listen: false).address}');
 
-                      // Container for User Dropdown
-                      Container(
-                        padding: EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
-                              spreadRadius: 1,
-                              blurRadius: 5,
-                              offset: Offset(0, 3), // Shadow position
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Select User',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            FutureBuilder<List<Users>>(
-                              future: selectedValue != null
-                                  ? fetchUsersForBuilding(
-                                      int.parse(selectedValue))
-                                  : Future.value([]),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Center(
-                                      child: CircularProgressIndicator());
-                                } else if (snapshot.hasError) {
-                                  print('Error: ${snapshot.error}');
-                                  return Text('Error: ${snapshot.error}');
-                                } else if (snapshot.hasData &&
-                                    snapshot.data!.isNotEmpty) {
-                                  return DropdownButton<String>(
-                                    hint: Text('Society Member Name'),
-                                    isExpanded: true,
-                                    value: _selectedVisitorName,
-                                    items: snapshot.data!.map((user) {
-                                      return DropdownMenuItem<String>(
-                                        value: user.userId.toString(),
-                                        child: Text(
-                                            '${user.userName ?? 'Unknown'} - ${user.apartmentNo ?? 'N/A'}'),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        _selectedVisitorName = value!;
-                                      });
-                                    },
-                                  );
-                                } else {
-                                  return Text(
-                                      'No users available for this building ');
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: screenWidth * 0.05),
-                  InputSection(
-                    controller: visitorNameController,
-                    title: 'Visitor Name',
-                    hintText: 'Enter your Visitor Name',
-                  ),
-                  SizedBox(height: screenWidth * 0.05),
-                  InputSection(
-                    controller: purposeOfVisitController,
-                    title: 'Purpose of Visit',
-                    hintText: 'Delivering packages for the resident',
-                  ),
-                  SizedBox(height: screenWidth * 0.05),
-                  InputSection(
-                    controller: contactNumberController,
-                    title: 'Contact Number',
-                    hintText: 'Enter your Contact Number',
-                  ),
-                  SizedBox(height: screenWidth * 0.05),
-                  Text(
-                    'Date',
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  SizedBox(height: screenWidth * 0.02),
-                  GestureDetector(
-                    onTap: () => _selectDate(context),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 15, horizontal: 10),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: 2.0,
-                        ),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Text(
-                        _selectedDate == null
-                            ? 'Select Date'
-                            : 'Selected date: ${_selectedDate!.toLocal().toString().split(' ')[0]}',
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: screenWidth * 0.05),
-                  DropdownSection(
-                    title: 'Expected Duration',
-                    items: ['30 mins', '1 Hour', '2 Hour', '3 Hour'],
-                    selectedValue: _selectedDuration,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedDuration = value;
-                      });
-                    },
-                  ),
-                  SizedBox(height: screenWidth * 0.05),
-                  InputSection(
-                    controller: additonalNotesController,
-                    title: 'Additional Notes',
-                    hintText: 'Any other relevant information',
-                  ),
-                  SizedBox(height: screenWidth * 0.05),
-                  AttachmentSection(),
-                  SizedBox(height: screenWidth * 0.05),
-                  Container(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        // Validate inputs
-                        // if (_selectedBuilding == null ||
-                        //     _selectedVisitorName == null ||
-                        //     visitorNameController.text.isEmpty ||
-                        //     purposeOfVisitController.text.isEmpty ||
-                        //     societyMemberController.text.isEmpty ||
-                        //     dateController.text.isEmpty) {
-                        //   ScaffoldMessenger.of(context).showSnackBar(
-                        //     SnackBar(
-                        //         content: Text(
-                        //             'Please fill all the required fields')),
-                        //   );
-                        //   return;
-                        // }
-                        usersList;
+                          print(_visitorNameController.text.trim());
 
-                        // Create the payload
-                        // final visitorData = {
-                        //   "user_id":
-                        //       _selectedVisitorName, // User ID from the selected dropdown
-                        //   "building_id": int.parse(selectedValue ??
-                        //       '0'), // Building ID from the first dropdown
-                        //   "apartment_no":
-                        //       "101", // You can modify this based on the selected user if needed
-                        //   "address":
-                        //       "Address for ${_selectedVisitorName ?? 'N/A'}", // Dynamic address
-                        //   "visitor_type":
-                        //       "Vendor", // Static value for visitor type
-                        //   "visitor_name": visitorNameController
-                        //       .text, // Visitor name from text field
-                        //   "purpose_of_visit": purposeOfVisitController
-                        //       .text, // Purpose of visit from text field
-                        //   "contact_number": societyMemberController
-                        //       .text, // Contact number from text field
-                        //   "visit_date":
-                        //       dateController.text, // Visit date from text field
-                        //   "expected_duration":
-                        //       _selectedDuration, // Expected duration from dropdown or text field
-                        //   "additional_notes": additonalNotesController
-                        //       .text, // Additional notes from text field
-                        //   "status": "Pending", // Static status
-                        // };
+                          // Prepare visitor data (excluding attachment)
+                          final visitorData = {
+                            "user_id": "$_selectedVisitorName",
+                            "building_id": "$selectedValue",
+                            "apartment_no": Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .apartmentNo ??
+                                "",
+                            "address": Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .address ??
+                                "no address",
+                            "visitor_type": isVendorChecked
+                                ? "Vendor"
+                                : (isGuestChecked ? "Guest" : "Unknown"),
+                            "visitor_name": "${_visitorNameController.text}",
+                            "purpose_of_visit":
+                                "${_purposeOfVisitController.text.trim()}",
+                            "contact_number":
+                                "${_contactNumberController.text.trim()}",
+                            "visit_date": _selectedDate != null
+                                ? _selectedDate!
+                                    .toLocal()
+                                    .toString()
+                                    .split(' ')[0]
+                                : "",
+                            "expected_duration": _selectedDuration ?? "",
+                            "additional_notes":
+                                "${_additonalNotesController.text.trim()}"
+                          };
 
-                        final visitorData = {
-                          "user_id": 93, // User ID from the selected dropdown
-                          "building_id":
-                              3, // Building ID from the first dropdown
-                          "apartment_no":
-                              "201", // You can modify this based on the selected user if needed
-                          "address": "Address for User 93", // Dynamic address
-                          "visitor_type":
-                              "Guest", // Static value for visitor type
-                          "visitor_name":
-                              "sumedh", // Visitor name from text field
-                          "purpose_of_visit":
-                              "Zomato2", // Purpose of visit from text field
-                          "contact_number":
-                              1234567892, // Contact number from text field
-                          "visit_date":
-                              2024 - 11 - 22, // Visit date from text field
-                          "expected_duration":
-                              "30 mins", // Expected duration from dropdown or text field
-                          "additional_notes":
-                              "food delivery- maggi", // Additional notes from text field
-                          "status": "Pending", // Static status
-                        };
-                        // Make POST request
-                        try {
-                          final response = await http.post(
-                            Uri.parse(AppUrl
-                                .postVisitorUrl), // Replace with your API endpoint
-                            headers: {
-                              "Authorization": "Bearer ${GlobalData().token}",
-                              "Content-Type": "application/json",
-                            },
-                            body: json.encode(visitorData),
-                          );
+                          // Send the visitor data and attachment
+                          await guardFeatures.postVisitorNotification(
+                              visitorData, _imageFile);
 
-                          if (response.statusCode == 200) {
-                            // Success
+                          if (guardFeatures.postError != null) {
+                            print(visitorData);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text(
+                                      'Error: ${guardFeatures.postError}')),
+                            );
+                          } else {
+                            print(visitorData);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                   content:
                                       Text('Notification sent successfully')),
                             );
-                          } else {
-                            // Handle API error
-                            print(visitorData);
-                            print(response.statusCode);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(
-                                  // 'Failed to send notification: ${response.statusCode}')),
-                                  'Notification sent successfully')),
-                            );
                           }
-                        } catch (e) {
-                          // Handle general errors
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    // Text('Error sending notification: $e')),
-                                    Text('Notification sent successfully')),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Pallete.mainBtnClr,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: screenWidth * 0.15, vertical: 16),
-                      ),
-                      child: Text(
-                        'Send Notification',
-                        style: TextStyle(
-                            fontSize: screenWidth * 0.04, color: Colors.white),
+                        },
+                        child: guardFeatures.isPosting
+                            ? CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                'Send Notification',
+                                style: TextStyle(color: Colors.white),
+                              ),
                       ),
                     ),
-                  ),
-                ],
-              ),
+                  ]),
             ),
           ),
         ),

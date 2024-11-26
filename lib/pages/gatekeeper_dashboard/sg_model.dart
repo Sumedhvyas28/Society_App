@@ -6,22 +6,22 @@ import 'package:society_app/pages/gatekeeper_dashboard/guard_notification/guard_
 final List<Map<String, dynamic>> gsGridItems = [
   {
     'image': 'assets/img/gs/guard.png',
-    'title': 'Guard Accessibility',
+    'title': 'Add Visitor Details',
     'page': GuardAccessibilityPage(),
   },
   {
     'image': 'assets/img/dashboard/notification/bell.png',
-    'title': 'Guard Notification',
+    'title': 'Vistor Details',
     'page': GuardNotificationPage(),
   },
   {
     'image': 'assets/img/gs/guardt.png',
-    'title': 'Guard Messages',
+    'title': 'Guard Messaging',
     'page': GuardMessagePage(),
   },
   {
     'image': 'assets/img/gs/message.png',
-    'title': 'All Messages',
+    'title': 'Guard Chat',
     'page': AllMessagePage(),
   },
 ];
