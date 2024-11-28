@@ -1,11 +1,11 @@
-class getGuardName {
+class getGuards {
   bool? success;
   String? message;
   List<Data>? data;
 
-  getGuardName({this.success, this.message, this.data});
+  getGuards({this.success, this.message, this.data});
 
-  getGuardName.fromJson(Map<String, dynamic> json) {
+  getGuards.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     message = json['message'];
     if (json['data'] != null) {

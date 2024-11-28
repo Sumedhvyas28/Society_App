@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/models/dummy/grid_items.dart';
 import 'package:society_app/notification_services.dart';
+import 'package:society_app/pages/modules/notification.dart';
 import 'package:society_app/pages/user_dashboard/more.dart';
 
 class DashbordPage extends StatefulWidget {
@@ -81,7 +82,13 @@ class _DashbordPageState extends State<DashbordPage> {
                       color: Colors.black,
                       size: 40,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NotificationPageUser()),
+                      );
+                    },
                   ),
                   IconButton(
                     icon: const Icon(

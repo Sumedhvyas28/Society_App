@@ -32,6 +32,8 @@ class _StarterPageState extends State<StarterPage> {
         child: widget.navigationShell,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type:
+            BottomNavigationBarType.fixed, // Ensures labels are always visible
         items: [
           BottomNavigationBarItem(
             icon: Image.asset(
@@ -56,7 +58,7 @@ class _StarterPageState extends State<StarterPage> {
         ],
         currentIndex: selectedIndex,
         selectedItemColor: Colors.black,
-        unselectedItemColor: Pallete.mainFontColor,
+        unselectedItemColor: Colors.black,
         onTap: _onItemTapped,
         iconSize: 42,
         elevation: 8,

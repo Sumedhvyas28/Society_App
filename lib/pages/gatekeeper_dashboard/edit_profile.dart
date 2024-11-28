@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/view_model/guard/features.dart';
 
 class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
@@ -10,186 +12,125 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<GuardFeatures>(context, listen: false).getUserDetailsApi();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final userDetails = Provider.of<GuardFeatures>(context).userDetails;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Pallete.mainDashColor,
-        title: Text('Back'),
+        title: const Text('Edit Profile'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              color: Pallete.mainDashColor,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: AssetImage('assets/img/gs/userg.png'),
-                    ),
-                    SizedBox(width: 16.0),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Guard 2',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+      body: userDetails == null
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile Header
+                  Container(
+                    color: Pallete.mainDashColor,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage: userDetails
+                                        .data?.userDetail?.profileImage !=
+                                    null
+                                ? NetworkImage(
+                                    userDetails.data!.userDetail!.profileImage!)
+                                : const AssetImage('assets/img/gs/userg.png')
+                                    as ImageProvider,
                           ),
-                        ),
-                        Text('A-103'),
-                      ],
+                          const SizedBox(width: 16.0),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                userDetails.data?.user?.name ?? 'No Name',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(userDetails.data?.userDetail?.societyName ??
+                                  'No Society Name'),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                    SizedBox(
-                      width: 150,
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Handle edit profile functionality
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
+                  const SizedBox(height: 16.0),
 
-            // Basic Profile Section
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Basic Profile',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  // Basic Profile Section
+                  _buildSectionHeader('Basic Profile'),
+                  ListTile(
+                    leading: const Icon(Icons.phone),
+                    title: Text(userDetails.data?.userDetail?.phoneNumber ??
+                        'Add Phone Number'),
                   ),
                   ListTile(
-                    leading: Icon(Icons.phone),
-                    title: Text('+919009009001'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Handle edit phone number functionality
-                      },
-                    ),
+                    leading: const Icon(Icons.email),
+                    title: Text(userDetails.data?.user?.email ?? 'Add Email'),
                   ),
                   ListTile(
-                    leading: Icon(Icons.email),
-                    title: Text('guard2@gmail.com'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Handle edit email functionality
-                      },
-                    ),
+                    leading: const Icon(Icons.calendar_today),
+                    title: Text(userDetails.data?.userDetail?.birthDate ??
+                        'Add Birth Date'),
                   ),
                   ListTile(
-                    leading: Icon(Icons.calendar_today),
-                    title: Text('Add Year of Birth'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Handle add year of birth functionality
-                      },
-                    ),
+                    leading: const Icon(Icons.female),
+                    title: Text(
+                        userDetails.data?.userDetail?.gender ?? 'Add Gender'),
+                  ),
+
+                  // More About You Section
+                  _buildSectionHeader('Bit More About You'),
+                  ListTile(
+                    leading: const Icon(Icons.interests),
+                    title: Text(
+                        userDetails.data?.userDetail?.hobbies ?? 'Add Hobbies'),
                   ),
                   ListTile(
-                    leading: Icon(Icons.female),
-                    title: Text('Add Gender'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Handle add gender functionality
-                      },
-                    ),
+                    leading: const Icon(Icons.work),
+                    title: Text(userDetails.data?.userDetail?.jobTitle ??
+                        'Add Job Title'),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.language),
+                    title: Text(userDetails.data?.userDetail?.languagesSpoken ??
+                        'Add Language'),
                   ),
                 ],
               ),
             ),
+    );
+  }
 
-            // More About You Section
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Bit more about you',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.interests),
-                    title: Text('Add Hobbies'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Handle add hobbies functionality
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.work),
-                    title: Text('Add Job Title'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Handle add job title functionality
-                      },
-                    ),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.language),
-                    title: Text('Add Language'),
-                    trailing: IconButton(
-                      icon: Icon(Icons.edit),
-                      onPressed: () {
-                        // Handle add language functionality
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Bottom Navigation Bar
-            BottomNavigationBar(
-              items: [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.my_location),
-                  label: 'My Unit',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.local_offer),
-                  label: 'Coupon',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.wallet),
-                  label: 'Wallet',
-                ),
-              ],
-            ),
-          ],
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

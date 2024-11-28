@@ -201,24 +201,6 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                           label: 'Guest',
                           onChanged: _onGuestCheckboxChanged,
                         ),
-                        const Spacer(),
-                        ElevatedButton(
-                          onPressed: () {},
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFE5E5E5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.add_rounded,
-                                  color: Pallete.textBtnClr),
-                              Text('Click',
-                                  style: TextStyle(color: Pallete.textBtnClr)),
-                            ],
-                          ),
-                        )
                       ],
                     ),
                     SizedBox(height: screenWidth * 0.05),
@@ -278,9 +260,10 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                                         setState(() {
                                           // print("value$value");
                                           selectedValue = value!;
+                                          print("sev $selectedValue");
                                           _selectedVisitorName =
                                               null; // Reset the user dropdown
-                                          print("sev $selectedValue");
+                                          print(_selectedVisitorName);
                                         });
                                       },
                                     );

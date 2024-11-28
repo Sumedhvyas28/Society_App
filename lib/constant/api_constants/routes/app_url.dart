@@ -7,6 +7,7 @@ class AppUrl {
   static String userDataUrl = "$baseUrl/user";
 
   static String getVisitorSocietyUrl = baseUrl + "/society-buildings";
+  static String getVisitorDetails = baseUrl + "/visitor";
   static String getVisitorSocietyBuildingUrl =
       "https://stagging.intouchsoftwaresolution.com/api/building-users";
 
@@ -16,4 +17,5 @@ class AppUrl {
 
   static String postGuardMessageUrl = baseUrl + '/guard-messages';
   static String updateDeviceTokenUrl = baseUrl + '/update-device-token';
+  static String fetchUserDetails = baseUrl + '/user-details';
 }

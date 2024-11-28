@@ -3,20 +3,16 @@ import 'package:provider/provider.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/models/guard/visitor_details/visitor_details.dart';
-import 'package:society_app/view_model/guard/features.dart';
 import 'package:society_app/view_model/guard/guard_prop.dart';
 
-class GuardNotificationPage extends StatefulWidget {
-  const GuardNotificationPage({super.key});
+class NotificationPageUser extends StatefulWidget {
+  const NotificationPageUser({super.key});
 
   @override
-  State<GuardNotificationPage> createState() => _GuardNotificationPageState();
+  State<NotificationPageUser> createState() => _NotificationPageUserState();
 }
 
-class _GuardNotificationPageState extends State<GuardNotificationPage> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-
+class _NotificationPageUserState extends State<NotificationPageUser> {
   @override
   void initState() {
     super.initState();
@@ -28,9 +24,11 @@ class _GuardNotificationPageState extends State<GuardNotificationPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final TextEditingController _searchController = TextEditingController();
+    String _searchQuery = '';
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Visitor Details'),
+      appBar: CustomAppBar(title: 'User Notifcaiton'),
       backgroundColor: Pallete.mainDashColor,
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.02),
@@ -146,6 +144,10 @@ class ExpandableVisitorCard extends StatefulWidget {
 class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
   bool isExpanded = false;
 
+  // Dropdown options
+  final List<String> dropdownOptions = ['Approved', 'Rejected', 'Commented'];
+  String? selectedOption;
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -204,27 +206,44 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                     ],
                   ),
                   const Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      // Handle action
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: _getStatusColor(widget.visitor.status),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenWidth * 0.03,
-                        vertical: screenWidth * 0.015,
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: selectedOption,
+                      icon: const Icon(Icons.arrow_drop_down,
+                          color: Colors.black),
+                      hint: Text(
+                        'Pending',
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.040,
+                          color: Colors.orange,
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      widget.visitor.status ?? 'N/A',
-                      style: const TextStyle(color: Colors.white),
+                      items: dropdownOptions.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(fontSize: screenWidth * 0.035),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) {
+                        setState(() {
+                          selectedOption = newValue;
+                          // Handle your action here
+                          print('Selected action: $selectedOption');
+                        });
+                      },
                     ),
                   ),
                 ],
               ),
               if (isExpanded) ...[
                 SizedBox(height: screenWidth * 0.02),
-                Text('Purpose: ${widget.visitor.purposeOfVisit ?? 'N/A'}'),
+                Text(
+                  'Purpose: ${widget.visitor.purposeOfVisit ?? 'N/A'}',
+                  style: TextStyle(fontSize: screenWidth * 0.035),
+                ),
               ],
             ],
           ),

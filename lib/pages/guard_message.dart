@@ -2,8 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:society_app/constant/api_constants/routes/app_url.dart';
 import 'package:society_app/constant/appbar.dart';
@@ -33,25 +31,21 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
   String? _selectedVisitorName;
   String? _selectedDuration;
   DateTime? _selectedDate;
-  String isImageUploade = "";
-  File? _imageFile;
-  final ImagePicker _picker = ImagePicker();
-  String? _base64Image;
 
   bool isDropdownDisabled = true;
 
-  TextEditingController _reasonController = TextEditingController();
-  TextEditingController _urgencyController = TextEditingController();
-  TextEditingController _categoryController = TextEditingController();
-  TextEditingController _additionalNotesController = TextEditingController();
+  TextEditingController societyMemberController = TextEditingController();
+  TextEditingController contactNumberController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
+  TextEditingController additonalNotesController = TextEditingController();
+  TextEditingController visitorNameController = TextEditingController();
+  TextEditingController purposeOfVisitController = TextEditingController();
   void initState() {
     super.initState();
 
     // Fetch visitor buildings on page load
     Provider.of<GuardFeatures>(context, listen: false).getGuardNamesApi();
   }
-
-  var selectedValue;
 
   @override
   Widget build(BuildContext context) {
@@ -61,26 +55,6 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
     final guardMessageFeatures = Provider.of<MessageFeatures>(context);
 
     String? _selectedVisitorName;
-    Future<void> _takePicture() async {
-      final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-
-      if (image != null) {
-        final directory = await getApplicationDocumentsDirectory();
-        final name = DateTime.now().millisecondsSinceEpoch.toString();
-        final imagePath = '${directory.path}/$name.jpg';
-
-        // Save the image to the file system
-        final File storedImage = await File(image.path).copy(imagePath);
-
-        setState(() {
-          _imageFile = storedImage; // Store the image file
-        });
-
-        print("Image saved at: ${storedImage.path}");
-      } else {
-        print("No image selected.");
-      }
-    }
 
     Future<List<Data>> getPost() async {
       try {
@@ -117,8 +91,10 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
       }
     }
 
+    var selectedValue;
+
     return Scaffold(
-      appBar: CustomAppBar(title: 'Guard Messaging'),
+      appBar: CustomAppBar(title: 'Add Visitor'),
       backgroundColor: Pallete.mainDashColor,
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.04),
@@ -151,20 +127,16 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
                           value: selectedValue,
                           items: snapshot.data!.map((Data) {
                             return DropdownMenuItem<String>(
-                              value: Data.toGuardId.toString(),
-                              child: Text(Data.name ?? 'Unknown'),
+                              value: Data.name.toString(),
+                              child: Text(Data.name.toString() ?? 'Unknown'),
                             );
                           }).toList(),
                           onChanged: (value) {
                             setState(() {
-                              print("value$value");
-
                               selectedValue = value!;
-                              print(selectedValue);
-                              // _selectedVisitorName = null;
-                              print(_selectedVisitorName);
+                              _selectedVisitorName = null;
                             });
-                            // print(selectedValue);
+                            print(selectedValue);
                           },
                         );
                       } else {
@@ -173,74 +145,24 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
                     },
                   ),
                   SizedBox(height: screenWidth * 0.05),
-                  Text(
-                    'Message/Reason to Contact: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: screenWidth * 0.04,
-                    ),
-                  ),
-                  SizedBox(height: screenWidth * 0.02),
-                  TextField(
-                    controller: _reasonController,
-                    decoration: InputDecoration(
-                        hintText:
-                            'Type your message or reason for communication',
-                        filled: true,
-                        focusColor: Colors.white,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        )),
+                  InputSection(
+                    controller: visitorNameController,
+                    title: 'Message/Reason to Contact: ',
+                    hintText: 'Type your message or reason for communication',
                   ),
                   SizedBox(height: screenWidth * 0.05),
-                  Text(
-                    'Urgency Level: ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: screenWidth * 0.04,
-                    ),
-                  ),
-                  SizedBox(height: screenWidth * 0.02),
-                  TextField(
-                    controller: _urgencyController,
-                    decoration: InputDecoration(
-                        hintText: 'Low/Medium/High',
-                        filled: true,
-                        focusColor: Colors.white,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        )),
+                  InputSection(
+                    controller: purposeOfVisitController,
+                    title: 'Urgency Level: ',
+                    hintText: 'Low/Medium/High',
                   ),
                   SizedBox(height: screenWidth * 0.05),
-                  Text(
-                    'Category (If Any) ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: screenWidth * 0.04,
-                    ),
-                  ),
-                  SizedBox(height: screenWidth * 0.02),
-                  TextField(
-                    controller: _categoryController,
-                    decoration: InputDecoration(
-                        filled: true,
-                        focusColor: Colors.white,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        )),
+                  InputSection(
+                    controller: societyMemberController,
+                    title: 'Category (If Any) ',
+                    hintText: 'Enter your Contact Number',
                   ),
                   SizedBox(height: screenWidth * 0.05),
-                  Text(
-                    'Date',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: screenWidth * 0.04,
-                    ),
-                  ),
-                  SizedBox(height: screenWidth * 0.02),
                   GestureDetector(
                     onTap: () => _selectDate(context),
                     child: Container(
@@ -263,84 +185,43 @@ class _GuardMessagePageState extends State<GuardMessagePage> {
                     ),
                   ),
                   SizedBox(height: screenWidth * 0.05),
-                  Text(
-                    'Additional Notes',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: screenWidth * 0.04,
-                    ),
-                  ),
-                  SizedBox(height: screenWidth * 0.02),
-                  TextField(
-                    controller: _additionalNotesController,
-                    decoration: InputDecoration(
-                        hintText: 'Any other relevant information',
-                        filled: true,
-                        focusColor: Colors.white,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        )),
+                  InputSection(
+                    controller: additonalNotesController,
+                    title: 'Additional Notes',
+                    hintText: 'Any other relevant information',
                   ),
                   SizedBox(height: screenWidth * 0.05),
-                  Center(
-                    child: InkWell(
-                      onTap: () async {
-                        await _takePicture();
-                      },
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.add_circle_rounded,
-                            color: Colors.black,
-                          ),
-                          SizedBox(width: screenWidth * 0.01),
-                          Text('Click a Picture'),
-                        ],
-                      ),
-                    ),
-                  ),
+                  AttachmentSection(),
                   SizedBox(height: screenWidth * 0.05),
                   Container(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () async {
-                        print(selectedValue);
-                        final guardData = {
-                          "to_guard_id": "$selectedValue",
-                          "message": "${_reasonController.text}",
-                          "urgency_level": "${_urgencyController.text}",
-                          "category": "${_categoryController.text}",
-                          "date": _selectedDate != null
-                              ? _selectedDate!
-                                  .toLocal()
-                                  .toString()
-                                  .split(' ')[0]
-                              : "",
-                          "additional_notes":
-                              "${_additionalNotesController.text}"
-                        };
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(
+                              // 'Failed to send notification: ${response.statusCode}')),
+                              'Notification sent successfully')),
+                        );
+                        // final postMessageData = Data(
+                        //   toGuardId: 98,
+                        //   message: "Some visitor came looks suspicious",
+                        //   urgencyLevel: "medium",
+                        //   category: "reminder",
+                        //   date: "2024-11-10",
+                        //   additionalNotes: "Check in by 8:00 PM.",
+                        //   attachment: null,
+                        // );
 
-                        // Send the visitor data and attachment
-                        await guardFeatures.postGuardMessageApi(
-                            guardData, _imageFile);
-
-                        if (guardFeatures.postError != null) {
-                          print(guardData);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text('Error: ${guardFeatures.postError}')),
-                          );
-                        } else {
-                          print(guardData);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content:
-                                    Text('Notification sent successfully')),
-                          );
-                        }
+                        // Provider.of<MessageFeatures>(context, listen: false)
+                        //     .postGuardMessageApi(postMessageData)
+                        //     .then((_) {
+                        //   print('s yes ');
+                        // }).onError(
+                        //   (error, stackTrace) {
+                        //     print('no');
+                        //     error.toString();
+                        //   },
+                        // );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Pallete.mainBtnClr,

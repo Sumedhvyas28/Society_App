@@ -8,6 +8,7 @@ import 'package:society_app/notification_services.dart';
 import 'package:society_app/view_model/auth_view_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:society_app/view_model/guard/features.dart';
+import 'package:society_app/view_model/guard/guard_prop.dart';
 import 'package:society_app/view_model/guard/message.dart';
 import 'package:society_app/view_model/guard/userProvider.dart';
 import 'package:society_app/view_model/user_session.dart';
@@ -46,6 +47,7 @@ class App extends StatelessWidget {
           create: (_) => NotificationServices()..firebaseInit(),
         ),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => GuardProp()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

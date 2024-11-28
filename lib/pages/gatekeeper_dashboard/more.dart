@@ -5,6 +5,7 @@ import 'package:society_app/pages/gatekeeper_dashboard/edit_profile.dart';
 import 'package:society_app/res/component/guard/reusable_row.dart';
 import 'package:society_app/res/component/round_button.dart';
 import 'package:go_router/go_router.dart';
+import 'package:society_app/view_model/guard/features.dart';
 import 'package:society_app/view_model/user_session.dart';
 
 class MoreSection extends StatefulWidget {
@@ -16,9 +17,18 @@ class MoreSection extends StatefulWidget {
 
 class MoreSectionState extends State<MoreSection> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<GuardFeatures>(context, listen: false).getUserDetailsApi();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final userPreference = Provider.of<UserSession>(context, listen: false);
     final screenWidth = MediaQuery.of(context).size.width;
+    final userDetails = Provider.of<GuardFeatures>(context).userDetails;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -47,37 +57,24 @@ class MoreSectionState extends State<MoreSection> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Guard 2',
+                                userDetails?.data?.user?.name ?? 'No Name',
                                 style: TextStyle(fontSize: 22),
                               ),
-                              Text('A-103'),
-                              Text('Male         10/12/2002'),
-                              Text('Cricket   '),
+                              SizedBox(
+                                height: screenWidth * 0.01,
+                              ),
+                              Text(userDetails?.data?.userDetail?.phoneNumber ??
+                                  'Add Phone Number'),
+                              SizedBox(
+                                height: screenWidth * 0.01,
+                              ),
+                              Text(userDetails?.data?.user?.email ??
+                                  'Add Email'),
                             ],
                           ),
                         ],
                       ),
-                      Positioned(
-                        bottom: 0, // Adjust as needed
-                        right: 8, // Adjust as needed
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => EditProfilePage()),
-                                );
-                              },
-                              icon: Icon(Icons.edit_sharp),
-                              iconSize: 30,
-                            ),
-                          ],
-                        ),
-                      ),
+
                       // want to add one more below it
                     ],
                   ),

@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:get/get_connect/http/src/interceptors/get_modifiers.dart';
 import 'package:society_app/models/device_token.dart';
 import 'package:society_app/models/guard/post_visitor_dart.dart';
+import 'package:society_app/models/guard/userdetails/user_details.dart';
 import 'package:society_app/models/guard/visitor_data.dart';
+import 'package:society_app/models/guard/visitor_details/visitor_details.dart';
 import 'package:society_app/network/BaseApiService.dart';
 import 'package:society_app/network/NetworkApiService.dart';
 import 'package:society_app/constant/api_constants/routes/app_url.dart';
@@ -14,6 +17,9 @@ import 'package:http_parser/http_parser.dart';
 
 class GuardRepo {
   final BaseApiServices _apiServices = NetworkApiService();
+
+  List<Map<String, dynamic>> _notifications = [];
+  List<Map<String, dynamic>> get notifications => _notifications;
 
   Future<List<Buildings>> getBuilding() async {
     try {
@@ -212,6 +218,76 @@ class GuardRepo {
     } catch (e) {
       print('Error posting visitor data: $e');
       throw Exception('Error posting visitor data');
+    }
+  }
+
+  Future<bool> postGuardMessageData(
+      Map<String, String> guardData, File? imageFile) async {
+    final headers = {
+      "Authorization": "Bearer ${GlobalData().token}",
+      // Remove Content-Type here as it will be set automatically by MultipartRequest
+    };
+
+    try {
+      var uri = Uri.parse(AppUrl.postGuardMessageUrl);
+
+      // Create multipart request
+      var request = http.MultipartRequest('POST', uri)..headers.addAll(headers);
+
+      // Add visitor data fields to the request
+      guardData.forEach((key, value) {
+        request.fields[key] = value;
+      });
+
+      // Add image file if present
+      if (imageFile != null) {
+        var file = await http.MultipartFile.fromPath('image', imageFile.path,
+            contentType:
+                MediaType('image', 'jpeg') // Update content type if needed
+            );
+        request.files.add(file);
+      }
+
+      // Send the request and get the response
+      var response = await request.send();
+
+      // Read the response body as a string
+      String responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 201) {
+        print('Guard Message data posted successfully');
+        return true;
+      } else {
+        // Print the actual error message from the response body
+        print('Failed to post visitor data: $responseBody');
+        return false;
+      }
+    } catch (e) {
+      print('Error posting visitor data: $e');
+      throw Exception('Error posting visitor data');
+    }
+  }
+
+// make a repo here
+  Future<getUserDetails> fetchUserDetails() async {
+    try {
+      Map<String, String> headers = {
+        "authorization": "Bearer ${GlobalData().token}",
+        "Content-Type": "application/json",
+      };
+
+      dynamic response = await _apiServices.getGetApiWithHeaderResponse(
+        AppUrl.fetchUserDetails,
+        headers,
+      );
+
+      if (response != null) {
+        return getUserDetails.fromJson(response);
+      } else {
+        throw Exception("Failed to fetch user details.");
+      }
+    } catch (e) {
+      throw Exception("Error fetching user details: $e");
     }
   }
 }

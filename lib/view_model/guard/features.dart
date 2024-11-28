@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:society_app/models/device_token.dart';
 import 'package:society_app/models/guard/get_guard_names.dart';
 import 'package:society_app/models/guard/post_visitor_dart.dart';
+import 'package:society_app/models/guard/userdetails/user_details.dart';
 import 'package:society_app/models/guard/visitor_data.dart';
+import 'package:society_app/models/guard/visitor_details/visitor_details.dart';
 import 'package:society_app/repository/guard_repo.dart';
 
 class GuardFeatures with ChangeNotifier {
@@ -114,6 +116,41 @@ class GuardFeatures with ChangeNotifier {
     } finally {
       _isPosting = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> postGuardMessageApi(
+      Map<String, String> guardData, File? imageFile) async {
+    _isPosting = true;
+    _postError = null;
+    notifyListeners();
+
+    try {
+      final isSuccess =
+          await _guardRepo.postGuardMessageData(guardData, imageFile);
+      if (isSuccess) {
+        print('Visitor notification posted successfully');
+      } else {
+        _postError = 'Failed to send visitor notification';
+      }
+    } catch (e) {
+      _postError = e.toString();
+    } finally {
+      _isPosting = false;
+      notifyListeners();
+    }
+  }
+
+  // make a viemodel here
+  getUserDetails? _userDetails;
+  getUserDetails? get userDetails => _userDetails;
+
+  Future<void> getUserDetailsApi() async {
+    try {
+      _userDetails = await _guardRepo.fetchUserDetails();
+      notifyListeners();
+    } catch (e) {
+      print("Error fetching user details: $e");
     }
   }
 }
