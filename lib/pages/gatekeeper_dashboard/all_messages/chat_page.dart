@@ -32,7 +32,7 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Pallete.mainDashColor,
-      appBar: CustomAppBar(title: 'Visitor'),
+      appBar: CustomAppBar(title: 'Guard 1'),
       body: Column(
         children: [
           Expanded(

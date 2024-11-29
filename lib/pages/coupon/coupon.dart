@@ -12,7 +12,7 @@ class _CouponPageState extends State<CouponPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      appBar: CustomAppBar(title: 'Coupqfqfon'),
+      appBar: CustomAppBar(title: 'Chat'),
     );
   }
 }

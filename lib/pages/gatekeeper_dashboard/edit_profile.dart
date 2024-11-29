@@ -26,7 +26,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Pallete.mainDashColor,
-        title: const Text('Edit Profile'),
+        title: const Text('Profile'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -89,34 +89,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     leading: const Icon(Icons.email),
                     title: Text(userDetails.data?.user?.email ?? 'Add Email'),
                   ),
-                  ListTile(
-                    leading: const Icon(Icons.calendar_today),
-                    title: Text(userDetails.data?.userDetail?.birthDate ??
-                        'Add Birth Date'),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.female),
-                    title: Text(
-                        userDetails.data?.userDetail?.gender ?? 'Add Gender'),
-                  ),
 
                   // More About You Section
-                  _buildSectionHeader('Bit More About You'),
-                  ListTile(
-                    leading: const Icon(Icons.interests),
-                    title: Text(
-                        userDetails.data?.userDetail?.hobbies ?? 'Add Hobbies'),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.work),
-                    title: Text(userDetails.data?.userDetail?.jobTitle ??
-                        'Add Job Title'),
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.language),
-                    title: Text(userDetails.data?.userDetail?.languagesSpoken ??
-                        'Add Language'),
-                  ),
                 ],
               ),
             ),

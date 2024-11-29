@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/edit_profile.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/more/app_support.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/more/help_and_support.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/more/notification_settings.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/more/refer_and_earn.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/more/terms_and_privacy.dart';
 import 'package:society_app/res/component/guard/reusable_row.dart';
 import 'package:society_app/res/component/round_button.dart';
 import 'package:go_router/go_router.dart';
@@ -84,23 +89,6 @@ class MoreSectionState extends State<MoreSection> {
                 padding: const EdgeInsets.all(12),
                 child: Column(
                   children: [
-                    IconTextRow(
-                      imagePath: 'assets/img/more/directory.png',
-                      text: 'Directory',
-                      onPressed: () {
-                        print('Directory tapped');
-                      },
-                    ),
-                    SizedBox(
-                      height: screenWidth * 0.04,
-                    ),
-                    IconTextRow(
-                      imagePath: 'assets/img/more/documents.png',
-                      text: 'Documents  ',
-                      onPressed: () {
-                        print('Home tapped');
-                      },
-                    ),
                     SizedBox(
                       height: screenWidth * 0.04,
                     ),
@@ -109,7 +97,11 @@ class MoreSectionState extends State<MoreSection> {
                       icon: Icons.home,
                       text: 'Refer And Earn',
                       onPressed: () {
-                        print('Home tapped');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ReferAndEarnPage()),
+                        );
                       },
                     ),
                     SizedBox(
@@ -120,7 +112,11 @@ class MoreSectionState extends State<MoreSection> {
                       icon: Icons.home,
                       text: 'Notification Setting',
                       onPressed: () {
-                        print('Home tapped');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => NotificationSettingsPage()),
+                        );
                       },
                     ),
                     SizedBox(
@@ -131,7 +127,11 @@ class MoreSectionState extends State<MoreSection> {
                       icon: Icons.home,
                       text: 'Help and Support',
                       onPressed: () {
-                        print('Home tapped');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HelpAndSupportPage()),
+                        );
                       },
                     ),
                     SizedBox(
@@ -142,7 +142,10 @@ class MoreSectionState extends State<MoreSection> {
                       icon: Icons.home,
                       text: 'App Support',
                       onPressed: () {
-                        print('Home tapped');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AppSupport()),
+                        );
                       },
                     ),
                     SizedBox(
@@ -153,19 +156,28 @@ class MoreSectionState extends State<MoreSection> {
                       icon: Icons.home,
                       text: 'Terms & Privacy',
                       onPressed: () {
-                        print('Home tapped');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TermsAndPrivacy()),
+                        );
                       },
                     ),
                     SizedBox(
                       height: screenWidth * 0.04,
                     ),
-                    RoundButton(
-                      title: 'Logout',
+                    IconTextRow(
+                      imagePath: 'assets/img/gs/logout.png',
+                      icon: Icons.logout,
+                      text: 'Logout',
                       onPressed: () async {
                         await userPreference.signOut().then((value) {
                           context.go('/login');
                         });
                       },
+                    ),
+                    SizedBox(
+                      height: screenWidth * 0.04,
                     ),
                   ],
                 ),

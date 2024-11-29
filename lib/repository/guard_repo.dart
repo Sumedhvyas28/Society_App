@@ -181,38 +181,39 @@ class GuardRepo {
       Map<String, String> visitorData, File? imageFile) async {
     final headers = {
       "Authorization": "Bearer ${GlobalData().token}",
-      "Content-Type": "application/x-www-form-urlencoded",
     };
 
     try {
       var uri = Uri.parse(AppUrl.postVisitorUrl);
 
-      // Create multipart request
       var request = http.MultipartRequest('POST', uri)..headers.addAll(headers);
 
-      // Add visitor data fields to the request
+      // Add fields
       visitorData.forEach((key, value) {
         request.fields[key] = value;
       });
 
-      // Add image file if present
+      // Add file if exists
       if (imageFile != null) {
+        print("Uploading file from path: ${imageFile.path}");
         var file = await http.MultipartFile.fromPath(
-            'attachment', imageFile.path,
-            contentType:
-                MediaType('image', 'jpeg') // Update content type if needed
-            );
+          'attachment',
+          imageFile.path,
+          contentType: MediaType('image', 'jpeg'),
+        );
         request.files.add(file);
       }
 
       // Send the request
       var response = await request.send();
 
+      // Handle the response
+      final responseBody = await response.stream.bytesToString();
       if (response.statusCode == 201) {
-        print('Visitor data posted successfully');
+        print('Visitor data posted successfully: $responseBody');
         return true;
       } else {
-        print('Failed to post visitor data: ${response.stream}');
+        print('Failed to post visitor data: $responseBody');
         return false;
       }
     } catch (e) {

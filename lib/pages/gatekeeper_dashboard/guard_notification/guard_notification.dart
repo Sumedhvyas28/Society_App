@@ -225,6 +225,15 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
               if (isExpanded) ...[
                 SizedBox(height: screenWidth * 0.02),
                 Text('Purpose: ${widget.visitor.purposeOfVisit ?? 'N/A'}'),
+                SizedBox(height: screenWidth * 0.02),
+                Text('Type: ${widget.visitor.visitorType ?? 'N/A'}'),
+                SizedBox(height: screenWidth * 0.02),
+                Text(
+                    'Contact Number: ${widget.visitor.contactNumber ?? 'N/A'}'),
+                SizedBox(height: screenWidth * 0.02),
+                Text('Duration: ${widget.visitor.expectedDuration ?? 'N/A'}'),
+                SizedBox(height: screenWidth * 0.02),
+                Text('Note: ${widget.visitor.additionalNotes ?? 'N/A'}'),
               ],
             ],
           ),

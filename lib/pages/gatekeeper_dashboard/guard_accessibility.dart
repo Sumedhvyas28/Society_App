@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:society_app/constant/api_constants/routes/app_url.dart';
@@ -234,6 +235,44 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                                 ),
                               ),
                               SizedBox(height: 8),
+                              // FutureBuilder<List<Buildings>>(
+                              //   future: getPost(),
+                              //   builder: (context, snapshot) {
+                              //     if (snapshot.connectionState ==
+                              //         ConnectionState.waiting) {
+                              //       return Center(
+                              //           child: CircularProgressIndicator());
+                              //     } else if (snapshot.hasError) {
+                              //       return Text('Error: ${snapshot.error}');
+                              //     } else if (snapshot.hasData &&
+                              //         snapshot.data!.isNotEmpty) {
+                              //       return DropdownButton<String>(
+                              //         hint: Text('Select Building'),
+                              //         isExpanded: true,
+                              //         value: selectedValue,
+                              //         items: snapshot.data!.map((building) {
+                              //           return DropdownMenuItem<String>(
+                              //             value: building.buildingId.toString(),
+                              //             child: Text(building.buildingName ??
+                              //                 'Unknown'),
+                              //           );
+                              //         }).toList(),
+                              //         onChanged: (value) {
+                              //           setState(() {
+                              //             // print("value$value");
+                              //             selectedValue = value!;
+                              //             print("sev $selectedValue");
+                              //             _selectedVisitorName =
+                              //                 null; // Reset the user dropdown
+                              //             print(_selectedVisitorName);
+                              //           });
+                              //         },
+                              //       );
+                              //     } else {
+                              //       return Text('No buildings available');
+                              //     }
+                              //   },
+                              // ),
                               FutureBuilder<List<Buildings>>(
                                 future: getPost(),
                                 builder: (context, snapshot) {
@@ -243,32 +282,47 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                                         child: CircularProgressIndicator());
                                   } else if (snapshot.hasError) {
                                     return Text('Error: ${snapshot.error}');
-                                  } else if (snapshot.hasData &&
-                                      snapshot.data!.isNotEmpty) {
-                                    return DropdownButton<String>(
-                                      hint: Text('Select Building'),
-                                      isExpanded: true,
-                                      value: selectedValue,
-                                      items: snapshot.data!.map((building) {
-                                        return DropdownMenuItem<String>(
-                                          value: building.buildingId.toString(),
-                                          child: Text(building.buildingName ??
-                                              'Unknown'),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
+                                  } else {
+                                    return DropdownSearch<Buildings>(
+                                      popupProps: PopupProps.menu(
+                                        showSearchBox: true,
+                                        searchFieldProps: TextFieldProps(
+                                          decoration: InputDecoration(
+                                            labelText: 'Search Building',
+                                            border: OutlineInputBorder(),
+                                          ),
+                                        ),
+                                      ),
+                                      asyncItems: (String? filter) async {
+                                        // If filter is needed, implement logic here
+                                        return snapshot.data ?? [];
+                                      },
+                                      itemAsString: (building) =>
+                                          building.buildingName ?? 'Unknown',
+                                      dropdownDecoratorProps:
+                                          DropDownDecoratorProps(
+                                        dropdownSearchDecoration:
+                                            InputDecoration(
+                                          border: OutlineInputBorder(),
+                                        ),
+                                      ),
+                                      selectedItem: snapshot.data?.firstWhere(
+                                        (building) =>
+                                            building.buildingId.toString() ==
+                                            selectedValue,
+                                        orElse: () => Buildings(
+                                            buildingId: 0,
+                                            buildingName: "Unknown"),
+                                      ),
+                                      onChanged: (Buildings? building) {
                                         setState(() {
-                                          // print("value$value");
-                                          selectedValue = value!;
-                                          print("sev $selectedValue");
+                                          selectedValue =
+                                              building?.buildingId.toString();
                                           _selectedVisitorName =
-                                              null; // Reset the user dropdown
-                                          print(_selectedVisitorName);
+                                              null; // Reset dependent dropdown
                                         });
                                       },
                                     );
-                                  } else {
-                                    return Text('No buildings available');
                                   }
                                 },
                               ),

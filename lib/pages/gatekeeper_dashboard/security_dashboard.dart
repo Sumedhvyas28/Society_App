@@ -4,7 +4,7 @@ import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/notification_services.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/edit_profile.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/guard_noitification.dart';
-import 'package:society_app/pages/gatekeeper_dashboard/more.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/more/more.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/sg_model.dart';
 import 'package:society_app/view_model/guard/features.dart';
 import 'package:society_app/view_model/user_session.dart';

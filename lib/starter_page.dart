@@ -32,8 +32,9 @@ class _StarterPageState extends State<StarterPage> {
         child: widget.navigationShell,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        type:
-            BottomNavigationBarType.fixed, // Ensures labels are always visible
+        selectedFontSize: 20,
+        type: BottomNavigationBarType.fixed,
+        unselectedFontSize: 14,
         items: [
           BottomNavigationBarItem(
             icon: Image.asset(
@@ -49,12 +50,16 @@ class _StarterPageState extends State<StarterPage> {
           ),
           BottomNavigationBarItem(
             icon: Image.asset('assets/navbar/coupon.png'),
-            label: 'Coupon',
+            label: 'Chat',
           ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/navbar/wallet.png'),
-            label: 'Wallet',
-          ),
+          // BottomNavigationBarItem(
+          //   icon: Image.asset('assets/navbar/coupon.png'),
+          //   label: 'Coupon',
+          // ),
+          // BottomNavigationBarItem(
+          //   icon: Image.asset('assets/navbar/wallet.png'),
+          //   label: 'Wallet',
+          // ),
         ],
         currentIndex: selectedIndex,
         selectedItemColor: Colors.black,
