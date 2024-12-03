@@ -183,6 +183,38 @@ class _SignUpPageState extends State<SignUpPage> {
                           ),
                         ),
                         const SizedBox(height: 20),
+                        const Text(
+                          'Phone Number',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 10),
+
+                        TextField(
+                          obscureText: _obscureText,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.phone),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Society',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        const SizedBox(height: 10),
+
+                        TextField(
+                          obscureText: _obscureText,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(Icons.home),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
                         Center(
                           child: RoundButton(
                               title: 'Sign Up',

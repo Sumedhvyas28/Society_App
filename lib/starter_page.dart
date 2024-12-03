@@ -48,18 +48,18 @@ class _StarterPageState extends State<StarterPage> {
             ),
             label: 'My Unit',
           ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/navbar/coupon.png'),
-            label: 'Chat',
-          ),
           // BottomNavigationBarItem(
           //   icon: Image.asset('assets/navbar/coupon.png'),
-          //   label: 'Coupon',
+          //   label: 'Chat',
           // ),
-          // BottomNavigationBarItem(
-          //   icon: Image.asset('assets/navbar/wallet.png'),
-          //   label: 'Wallet',
-          // ),
+          BottomNavigationBarItem(
+            icon: Image.asset('assets/navbar/coupon.png'),
+            label: 'Coupon',
+          ),
+          BottomNavigationBarItem(
+            icon: Image.asset('assets/navbar/wallet.png'),
+            label: 'Wallet',
+          ),
         ],
         currentIndex: selectedIndex,
         selectedItemColor: Colors.black,
