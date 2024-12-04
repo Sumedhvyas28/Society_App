@@ -1,4 +1,4 @@
-import 'package:society_app/pages/modules/amenity_booking/booking/book_amenities.dart';
+import 'package:society_app/pages/user_dashboard/modules/amenity_booking/booking/book_amenities.dart';
 
 final List<Map<String, dynamic>> bookAmenitiesItems = [
   {

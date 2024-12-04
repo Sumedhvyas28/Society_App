@@ -11,6 +11,7 @@ import 'package:society_app/view_model/guard/features.dart';
 import 'package:society_app/view_model/guard/guard_prop.dart';
 import 'package:society_app/view_model/guard/message.dart';
 import 'package:society_app/view_model/guard/userProvider.dart';
+import 'package:society_app/view_model/user/user_viewmodel.dart';
 import 'package:society_app/view_model/user_session.dart';
 import 'firebase_options.dart';
 
@@ -47,6 +48,7 @@ class App extends StatelessWidget {
           create: (_) => NotificationServices()..firebaseInit(),
         ),
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => UserFeatures()),
         ChangeNotifierProvider(create: (_) => GuardProp()),
       ],
       child: MaterialApp.router(

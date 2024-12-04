@@ -70,21 +70,21 @@ class User {
 }
 
 class UserDetail {
-  String? description;
-  String? societyName;
-  Null? buildingName;
-  Null? apartmentNo;
-  Null? address;
-  String? phoneNumber;
-  Null? service;
-  Null? profileImage;
-  Null? image;
-  Null? birthDate;
-  Null? age;
-  String? gender;
-  Null? hobbies;
-  Null? jobTitle;
-  Null? languagesSpoken;
+  dynamic? description;
+  dynamic? societyName;
+  dynamic? buildingName;
+  dynamic? apartmentNo;
+  dynamic? address;
+  dynamic? phoneNumber;
+  dynamic? service;
+  dynamic? profileImage;
+  dynamic? image;
+  dynamic? birthDate;
+  dynamic? age;
+  dynamic? gender;
+  List<dynamic>? hobbies;
+  dynamic? jobTitle;
+  List<dynamic>? languagesSpoken;
 
   UserDetail(
       {this.description,

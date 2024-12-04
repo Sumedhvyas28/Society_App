@@ -153,4 +153,13 @@ class GuardFeatures with ChangeNotifier {
       print("Error fetching user details: $e");
     }
   }
+
+  Future<void> postUserDetailsApi() async {
+    try {
+      _userDetails = await _guardRepo.fetchUserDetails();
+      notifyListeners();
+    } catch (e) {
+      print("Error fetching user details: $e");
+    }
+  }
 }

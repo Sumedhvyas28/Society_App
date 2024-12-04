@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/models/dummy/grid_items.dart';
 import 'package:society_app/notification_services.dart';
-import 'package:society_app/pages/modules/notification.dart';
-import 'package:society_app/pages/user_dashboard/more.dart';
+import 'package:society_app/pages/user_dashboard/edit_profile.dart';
+import 'package:society_app/pages/user_dashboard/modules/notification.dart';
+import 'package:society_app/pages/user_dashboard/modules/more.dart';
 
 class DashbordPage extends StatefulWidget {
   const DashbordPage({super.key});
@@ -13,19 +14,19 @@ class DashbordPage extends StatefulWidget {
 }
 
 class _DashbordPageState extends State<DashbordPage> {
-  // NotificationServices notificationServices = NotificationServices();
+  NotificationServices notificationServices = NotificationServices();
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   notificationServices.requestNotificationPermission();
-  //   notificationServices.isTokenRefresh();
-  //   notificationServices.getDeviceToken().then((value) {
-  //     print('device token');
-  //     print(value);
-  //   });
-  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    notificationServices.requestNotificationPermission();
+    notificationServices.isTokenRefresh();
+    notificationServices.getDeviceToken().then((value) {
+      print('device token');
+      print(value);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +48,18 @@ class _DashbordPageState extends State<DashbordPage> {
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
-                  const Icon(
-                    Icons.supervised_user_circle_rounded,
-                    size: 40,
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => UserEditProfile()),
+                      );
+                    },
+                    icon: Icon(
+                      Icons.supervised_user_circle_rounded,
+                      size: 40,
+                    ),
                     color: Colors.black,
                   ),
                   const SizedBox(width: 8),

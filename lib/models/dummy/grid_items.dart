@@ -1,9 +1,15 @@
-import 'package:society_app/pages/modules/Society_noti/society_notification.dart';
-import 'package:society_app/pages/modules/amenity_booking/amenity.dart';
-import 'package:society_app/pages/modules/labour%20module/labour_page.dart';
-import 'package:society_app/pages/modules/shop%20module/shop_landing.dart';
+import 'package:society_app/pages/user_dashboard/modules/Society_noti/society_notification.dart';
+import 'package:society_app/pages/user_dashboard/modules/amenity_booking/amenity.dart';
+import 'package:society_app/pages/user_dashboard/modules/labour%20module/labour_page.dart';
+import 'package:society_app/pages/user_dashboard/modules/security_service/security_service.dart';
+import 'package:society_app/pages/user_dashboard/modules/shop%20module/shop_landing.dart';
 
 final List<Map<String, dynamic>> gridItems = [
+  {
+    'image': 'assets/img/dashboard/security_service/security.png',
+    'title': 'Security Service ',
+    'page': SecurityServicePage(),
+  },
   {
     'image': 'assets/img/dashboard/shop_module/shop_module.png',
     'title': 'Shop Module',
@@ -27,11 +33,6 @@ final List<Map<String, dynamic>> gridItems = [
   {
     'image': 'assets/img/dashboard/medical_module/medical.png',
     'title': 'Medical Module',
-    'page': ShopLanding(),
-  },
-  {
-    'image': 'assets/img/dashboard/security_service/security.png',
-    'title': 'Security Service ',
     'page': ShopLanding(),
   },
   {

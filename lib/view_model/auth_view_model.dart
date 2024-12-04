@@ -148,7 +148,7 @@ class AuthViewModel with ChangeNotifier {
     }
 
     //
-    else if (role == 'Society admin') {
+    else if (role == 'society_admin') {
       GoRouter.of(context).go('/societyadminpage');
     }
 
