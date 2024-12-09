@@ -12,6 +12,7 @@ import 'package:society_app/network/NetworkApiService.dart';
 import 'package:society_app/constant/api_constants/routes/app_url.dart';
 import 'package:society_app/view_model/user_session.dart';
 import 'package:http/http.dart' as http;
+import 'package:society_app/models/guard/societies.dart' as lol;
 
 import 'package:http_parser/http_parser.dart';
 
@@ -286,6 +287,29 @@ class GuardRepo {
         return getUserDetails.fromJson(response);
       } else {
         throw Exception("Failed to fetch user details.");
+      }
+    } catch (e) {
+      throw Exception("Error fetching user details: $e");
+    }
+  }
+
+  Future<lol.getSocieties> getSocietiesRepo() async {
+    try {
+      Map<String, String> headers = {
+        "authorization": "Bearer ${GlobalData().token}",
+        "Content-Type": "application/json",
+      };
+
+      dynamic response = await _apiServices.getGetApiWithHeaderResponse(
+        AppUrl.getSocieties,
+        headers,
+      );
+
+      if (response != null) {
+        print('lfoflflfl');
+        return lol.getSocieties.fromJson(response);
+      } else {
+        throw Exception("Failed to societues ser details.");
       }
     } catch (e) {
       throw Exception("Error fetching user details: $e");

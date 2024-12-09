@@ -234,6 +234,8 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                 Text('Duration: ${widget.visitor.expectedDuration ?? 'N/A'}'),
                 SizedBox(height: screenWidth * 0.02),
                 Text('Note: ${widget.visitor.additionalNotes ?? 'N/A'}'),
+                SizedBox(height: screenWidth * 0.02),
+                Text('Note: ${widget.visitor.commentMessage ?? 'N/A'}'),
               ],
             ],
           ),

@@ -282,9 +282,24 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                                         child: CircularProgressIndicator());
                                   } else if (snapshot.hasError) {
                                     return Text('Error: ${snapshot.error}');
+                                  } else if (!snapshot.hasData ||
+                                      snapshot.data!.isEmpty) {
+                                    // Handle the case when no data is available
+                                    return Text('No buildings available');
                                   } else {
+                                    final buildingsList =
+                                        snapshot.data!; // Ensure it's non-null
+                                    final selectedBuilding =
+                                        buildingsList.firstWhere(
+                                      (building) =>
+                                          building.buildingId.toString() ==
+                                          selectedValue,
+                                      orElse: () => buildingsList.first,
+                                    );
+
                                     return DropdownSearch<Buildings>(
-                                      popupProps: PopupProps.menu(
+                                      popupProps: PopupProps.dialog(
+                                        // Use dialog to avoid two fields
                                         showSearchBox: true,
                                         searchFieldProps: TextFieldProps(
                                           decoration: InputDecoration(
@@ -293,12 +308,10 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                                           ),
                                         ),
                                       ),
-                                      asyncItems: (String? filter) async {
-                                        // If filter is needed, implement logic here
-                                        return snapshot.data ?? [];
-                                      },
+                                      items:
+                                          buildingsList, // Directly provide the list
                                       itemAsString: (building) =>
-                                          building.buildingName ?? 'Unknown',
+                                          building.buildingName ?? 'Unnamed',
                                       dropdownDecoratorProps:
                                           DropDownDecoratorProps(
                                         dropdownSearchDecoration:
@@ -306,14 +319,7 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
                                           border: OutlineInputBorder(),
                                         ),
                                       ),
-                                      selectedItem: snapshot.data?.firstWhere(
-                                        (building) =>
-                                            building.buildingId.toString() ==
-                                            selectedValue,
-                                        orElse: () => Buildings(
-                                            buildingId: 0,
-                                            buildingName: "Unknown"),
-                                      ),
+                                      selectedItem: selectedBuilding,
                                       onChanged: (Buildings? building) {
                                         setState(() {
                                           selectedValue =
@@ -332,6 +338,7 @@ class _GuardAccessibilityPageState extends State<GuardAccessibilityPage> {
 
                         // Container for User Dropdown
                         Container(
+                          width: double.infinity,
                           padding: EdgeInsets.all(12),
                           decoration: BoxDecoration(
                             color: Colors.white,

@@ -19,29 +19,10 @@ class _LoginPageState extends State<LoginPage> {
   final FocusNode _emailFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
   bool _isEmailFocused = false;
+  bool _isSheetExpanded = false;
 
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-
-  // NotificationServices notificationServices = NotificationServices();
-
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   initialTask();
-  // }
-
-  // void initialTask() {
-  //   notificationServices.requestNotificationPermission();
-  //   notificationServices.firebaseInit();
-  //   notificationServices.getDeviceToken().then(
-  //     (value) async {
-  //       print('device token');
-  //       print(value);
-  //     },
-  //   );
-  // }
 
   @override
   void dispose() {
@@ -52,14 +33,29 @@ class _LoginPageState extends State<LoginPage> {
     _passwordFocusNode.dispose();
   }
 
+  void _toggleSheet() {
+    setState(() {
+      _isSheetExpanded = !_isSheetExpanded;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final authViewModel = Provider.of<AuthViewModel>(context);
-    final h = MediaQuery.of(context).size.height * 1;
+    final h = MediaQuery.of(context).size.height;
+    final w = MediaQuery.of(context).size.width;
+
+    // Detect if the keyboard is open
+    double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    double formOffset = keyboardHeight > 0
+        ? keyboardHeight / 2
+        : 0; // Adjust position when keyboard appears
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
+          // Background Image
           Container(
             width: double.infinity,
             height: double.infinity,
@@ -73,8 +69,8 @@ class _LoginPageState extends State<LoginPage> {
             left: 0,
             right: 0,
             child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 1,
+              width: w,
+              height: h * 1,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -89,45 +85,50 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          Positioned(
-            top: 581,
+
+          // Animated Text (position and content change based on sheet expansion)
+          AnimatedPositioned(
+            duration: const Duration(seconds: 1),
+            top: _isSheetExpanded ? h * 0.350 : 600,
             left: 0,
             right: 0,
             child: Container(
               padding: const EdgeInsets.all(14),
               child: RichText(
-                text: const TextSpan(
+                text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Swipe up',
+                      text: _isSheetExpanded ? 'Hello,' : 'Swipe up',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 30,
+                        fontSize: w * 0.08,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     TextSpan(
-                      text: ' to',
+                      text: _isSheetExpanded ? '' : ' to',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 30,
+                        fontSize: w * 0.08,
                       ),
                     ),
                     TextSpan(
-                      text: '\n' + 'explore the world',
+                      text: _isSheetExpanded
+                          ? '\n' + 'Welcome User'
+                          : '\n' + 'explore the world',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 30,
+                        fontSize: w * 0.08,
                       ),
                     ),
                     TextSpan(
-                      text: '\n' + 'of Society',
+                      text: _isSheetExpanded ? '' : '\n' + 'of Society',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 30,
+                        fontSize: w * 0.08,
                       ),
                     ),
                   ],
@@ -135,135 +136,141 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          Positioned(
-            top: 760,
-            left: 50,
-            right: 50,
-            child: Center(
-              child: Icon(
-                Icons.arrow_upward,
-                size: 40,
-              ),
-            ),
-          ),
-          DraggableScrollableSheet(
-            initialChildSize: 0.135,
-            minChildSize: 0.135,
-            maxChildSize: 0.6,
-            builder: (BuildContext context, ScrollController scrollController) {
-              return Container(
+
+          // Bottom Sheet Animation using AnimatedPositioned
+          AnimatedPositioned(
+            duration: const Duration(milliseconds: 900),
+            bottom: _isSheetExpanded ? 0 : -h * 3,
+            left: 0,
+            right: 0,
+            child: SingleChildScrollView(
+              // Allow scrolling when keyboard appears
+              padding: EdgeInsets.only(
+                  bottom: keyboardHeight), // Add padding for keyboard
+              child: Container(
                 decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
                 child: SafeArea(
                   child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Rectangle line for dragging
-                          Container(
-                            width: 100,
-                            height: 5,
-                            margin: const EdgeInsets.only(bottom: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[900],
+                    padding: EdgeInsets.all(w * 0.05), // Dynamic padding
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Enter Your Account Details',
+                          style: TextStyle(fontSize: w * 0.06),
+                        ),
+                        const SizedBox(height: 20),
+                        TextField(
+                          focusNode: _emailFocusNode,
+                          controller: emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            labelText: _isEmailFocused ? null : 'Email',
+                            prefixIcon: Icon(Icons.email),
+                            border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          Text(
-                            'Enter Your Account Details',
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          const SizedBox(height: 20),
-                          TextField(
-                            focusNode: _emailFocusNode,
-                            controller: emailController,
-                            keyboardType: TextInputType.emailAddress,
-                            decoration: InputDecoration(
-                              labelText: _isEmailFocused ? null : 'Email',
-                              prefixIcon: Icon(Icons.email),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
+                          onSubmitted: (value) {
+                            Utils.fieldFocusChange(
+                                context, _emailFocusNode, _passwordFocusNode);
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        TextField(
+                          obscureText: _obscureText,
+                          controller: passwordController,
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            prefixIcon: Icon(Icons.lock),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscureText
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                               ),
-                            ),
-                            onSubmitted: (value) {
-                              Utils.fieldFocusChange(
-                                  context, _emailFocusNode, _passwordFocusNode);
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          TextField(
-                            obscureText: _obscureText,
-                            controller: passwordController,
-                            decoration: InputDecoration(
-                              labelText: 'Password',
-                              prefixIcon: Icon(Icons.lock),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _obscureText
-                                      ? Icons.visibility
-                                      : Icons.visibility_off,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscureText = !_obscureText;
-                                  });
-                                },
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: TextButton(
                               onPressed: () {
-                                // Handle forgot password action
+                                setState(() {
+                                  _obscureText = !_obscureText;
+                                });
                               },
-                              child: Text(
-                                'Forgot Password?',
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.black),
-                              ),
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          const SizedBox(height: 20),
-                          RoundButton(
-                              title: 'Login',
-                              loading: authViewModel.loading,
-                              onPressed: () {
-                                Map data = {
-                                  "email": emailController.text.toString(),
-                                  "password":
-                                      passwordController.text.toString(),
-                                };
-                                authViewModel.loginRepo(data, context);
-                              }),
-
-                          const SizedBox(height: 10),
-                          InkWell(
-                            onTap: () {
-                              GoRouter.of(context).go('/signup');
+                        ),
+                        const SizedBox(height: 10),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () {
+                              // Handle forgot password action
                             },
                             child: Text(
-                              "Don't have an account? Sign Up",
+                              'Forgot Password?',
                               style: TextStyle(
-                                  fontSize: 16, color: Colors.grey[800]),
+                                  fontSize: w * 0.04, color: Colors.black),
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        RoundButton(
+                          title: 'Login',
+                          loading: authViewModel.loading,
+                          onPressed: () {
+                            Map data = {
+                              "email": emailController.text.toString(),
+                              "password": passwordController.text.toString(),
+                            };
+                            authViewModel.loginRepo(data, context);
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        InkWell(
+                          onTap: () {
+                            GoRouter.of(context).go('/signup');
+                          },
+                          child: Text(
+                            "Don't have an account? Sign Up",
+                            style: TextStyle(
+                                fontSize: w * 0.04, color: Colors.grey[800]),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              );
-            },
+              ),
+            ),
+          ),
+
+          // Bottom Icon to expand/collapse sheet
+          Positioned(
+            bottom: _isSheetExpanded ? 0 : 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              width: double.infinity,
+              child: Center(
+                child: IconButton(
+                  icon: Icon(
+                    _isSheetExpanded
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_up,
+                    size: w * 0.1, // Dynamic size based on screen width
+                  ),
+                  onPressed: _toggleSheet,
+                ),
+              ),
+            ),
           ),
         ],
       ),

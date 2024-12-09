@@ -36,6 +36,9 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
               .updateDeviceTokenApi(value);
           print(value);
           print(GlobalData().token);
+          print('f/f.qf;qf/qwfq/');
+
+          print(GlobalData().role);
         } else {
           print('Device token is null');
         }
@@ -77,13 +80,13 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: TextField(
                       style: TextStyle(
                         color: Colors.black,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'Manoj kumar',
+                        hintText: GlobalData().name,
                         hintStyle: TextStyle(
                           color: Colors.black,
                           fontSize: 20,
@@ -91,14 +94,6 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
                         border: InputBorder.none,
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.search,
-                      color: Colors.black,
-                      size: 40,
-                    ),
-                    onPressed: () {},
                   ),
                   IconButton(
                     icon: const Icon(

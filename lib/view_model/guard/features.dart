@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:society_app/models/device_token.dart';
 import 'package:society_app/models/guard/get_guard_names.dart';
+import 'package:society_app/models/guard/message/get_message.dart';
 import 'package:society_app/models/guard/post_visitor_dart.dart';
 import 'package:society_app/models/guard/userdetails/user_details.dart';
 import 'package:society_app/models/guard/visitor_data.dart';
 import 'package:society_app/models/guard/visitor_details/visitor_details.dart';
 import 'package:society_app/repository/guard_repo.dart';
+import 'package:society_app/models/guard/societies.dart' as lol;
 
 class GuardFeatures with ChangeNotifier {
   final GuardRepo _guardRepo = GuardRepo();
@@ -159,6 +161,19 @@ class GuardFeatures with ChangeNotifier {
       _userDetails = await _guardRepo.fetchUserDetails();
       notifyListeners();
     } catch (e) {
+      print("Error fetching user details: $e");
+    }
+  }
+
+  lol.getSocieties? _getSoci;
+  lol.getSocieties? get getSoci => _getSoci;
+  Future<void> getSocieitiesApi() async {
+    try {
+      _getSoci = await _guardRepo.getSocietiesRepo();
+      print('pfoafpfoa');
+      notifyListeners();
+    } catch (e) {
+      print(_getSoci);
       print("Error fetching user details: $e");
     }
   }

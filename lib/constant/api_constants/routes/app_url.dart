@@ -18,4 +18,5 @@ class AppUrl {
   static String postGuardMessageUrl = baseUrl + '/guard-messages';
   static String updateDeviceTokenUrl = baseUrl + '/update-device-token';
   static String fetchUserDetails = baseUrl + '/user-details';
+  static String getSocieties = baseUrl + '/societies';
 }

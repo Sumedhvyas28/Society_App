@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:society_app/models/device_token.dart';
+import 'package:society_app/models/guard/message/get_message.dart';
 import 'package:society_app/models/guard/visitor_details/visitor_details.dart';
 import 'package:society_app/repository/new_repo.dart';
 

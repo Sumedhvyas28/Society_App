@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/view_model/user_session.dart';
 
 class StarterPage extends StatefulWidget {
   const StarterPage({super.key, required this.navigationShell});
@@ -25,6 +26,50 @@ class _StarterPageState extends State<StarterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final role = GlobalData().role; // Get the user role
+
+    // Define the bottom nav items based on the role
+    List<BottomNavigationBarItem> navItems;
+
+    if (role == 'security_guard') {
+      // Custom bottom nav items for security guards
+      navItems = [
+        BottomNavigationBarItem(
+          icon: Image.asset('assets/navbar/home.png'),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset('assets/navbar/unit.png'),
+          label: 'My Unit',
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset(
+              'assets/navbar/wallet.png'), // New icon for security-related tasks
+          label: 'chat',
+        ),
+      ];
+    } else {
+      // Default bottom nav items
+      navItems = [
+        BottomNavigationBarItem(
+          icon: Image.asset('assets/navbar/home.png'),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset('assets/navbar/unit.png'),
+          label: 'My Unit',
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset('assets/navbar/coupon.png'),
+          label: 'Coupon',
+        ),
+        BottomNavigationBarItem(
+          icon: Image.asset('assets/navbar/wallet.png'),
+          label: 'Wallet',
+        ),
+      ];
+    }
+
     return Scaffold(
       body: SizedBox(
         width: double.infinity,
@@ -35,32 +80,7 @@ class _StarterPageState extends State<StarterPage> {
         selectedFontSize: 20,
         type: BottomNavigationBarType.fixed,
         unselectedFontSize: 14,
-        items: [
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              'assets/navbar/home.png',
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset(
-              'assets/navbar/unit.png',
-            ),
-            label: 'My Unit',
-          ),
-          // BottomNavigationBarItem(
-          //   icon: Image.asset('assets/navbar/coupon.png'),
-          //   label: 'Chat',
-          // ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/navbar/coupon.png'),
-            label: 'Coupon',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/navbar/wallet.png'),
-            label: 'Wallet',
-          ),
-        ],
+        items: navItems, // Use the dynamic nav items
         currentIndex: selectedIndex,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.black,

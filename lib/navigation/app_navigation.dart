@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:society_app/pages/user_dashboard/modules/chat.dart';
 import 'package:society_app/view/create_page.dart';
 import 'package:society_app/homeBaseDashboard.dart';
 import 'package:society_app/view/login_page.dart';
@@ -14,6 +15,7 @@ import 'package:society_app/pages/wallet/wallet.dart';
 import 'package:society_app/pages/vendor_dashboard/vendor_dashboard.dart';
 import 'package:society_app/starter_page.dart';
 import 'package:society_app/view/splash_screen.dart';
+import 'package:society_app/view_model/user_session.dart';
 
 class AppNavigation {
   AppNavigation._();
@@ -25,6 +27,7 @@ class AppNavigation {
   static final _rootNavigatorMyUnit = GlobalKey<NavigatorState>();
   static final _rootNavigatorCoupon = GlobalKey<NavigatorState>();
   static final _rootNavigatorWallet = GlobalKey<NavigatorState>();
+  static final _rootNavigatorChat = GlobalKey<NavigatorState>();
 
   static final GoRouter router = GoRouter(
     initialLocation: initR,
@@ -72,11 +75,27 @@ class AppNavigation {
                 path: '/home',
                 name: 'Home',
                 builder: (context, state) {
-                  return HomebasePage(
-                    key: state.pageKey,
-                  );
+                  final roleS = GlobalData().role;
+
+                  // Check the role and render the respective page
+                  if (roleS == 'security_guard') {
+                    return SecurityDashboardpage(key: state.pageKey);
+                  } else if (roleS == 'society_member') {
+                    return DashbordPage(key: state.pageKey);
+                  } else if (roleS == 'business_partner') {
+                    return BpDashboardpage(key: state.pageKey);
+                  } else if (roleS == 'vendor') {
+                    return VendorDashboardPage(key: state.pageKey);
+                  } else if (roleS == 'super_admin') {
+                    return SuperDashboard(key: state.pageKey);
+                  } else if (roleS == 'society_admin') {
+                    return AdminDashboardPage(key: state.pageKey);
+                  }
+
+                  return HomebasePage(key: state.pageKey);
                 },
               ),
+
               // user
               GoRoute(
                 path: '/userdashboard',
@@ -175,6 +194,20 @@ class AppNavigation {
                 name: 'wallet',
                 builder: (context, state) {
                   return WalletPage(
+                    key: state.pageKey,
+                  );
+                },
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            navigatorKey: _rootNavigatorChat,
+            routes: [
+              GoRoute(
+                path: '/chat',
+                name: 'chat',
+                builder: (context, state) {
+                  return chatPage(
                     key: state.pageKey,
                   );
                 },

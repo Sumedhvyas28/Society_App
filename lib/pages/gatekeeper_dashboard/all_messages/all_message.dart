@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
-import 'package:society_app/pages/gatekeeper_dashboard/all_messages/all.dart';
+import 'package:society_app/models/guard/message/get_message.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/all_messages/chat_page.dart';
+import 'package:society_app/repository/message.dart';
 
 class AllMessagePage extends StatefulWidget {
   const AllMessagePage({super.key});
@@ -12,12 +13,13 @@ class AllMessagePage extends StatefulWidget {
 }
 
 class _AllMessagePageState extends State<AllMessagePage> {
-  TextEditingController _searchController = TextEditingController();
-  List<Map<String, dynamic>> _filteredData = allData;
+  final TextEditingController _searchController = TextEditingController();
+  late Future<List<GuardMessages>> _guardMessages;
 
   @override
   void initState() {
     super.initState();
+    _guardMessages = GuardMessageRepo().fetchGuardMessages();
     _searchController.addListener(_filterData);
   }
 
@@ -30,11 +32,7 @@ class _AllMessagePageState extends State<AllMessagePage> {
 
   void _filterData() {
     setState(() {
-      _filteredData = allData
-          .where((item) => item['title']
-              .toLowerCase()
-              .contains(_searchController.text.toLowerCase()))
-          .toList();
+      // Here, we'll filter based on the message text if required
     });
   }
 
@@ -43,43 +41,59 @@ class _AllMessagePageState extends State<AllMessagePage> {
     return Scaffold(
       appBar: CustomAppBar(title: 'All Messages'),
       backgroundColor: Pallete.mainDashColor,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(9),
-          child: Column(
-            children: [
-              // Search Bar
-              Padding(
-                padding: const EdgeInsets.only(left: 14, right: 14),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.search),
-                    hintText: 'Search messages...',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+      body: FutureBuilder<List<GuardMessages>>(
+        future: _guardMessages,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            print(snapshot.error);
+            return Center(child: Text('No New Messages'));
+            // return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return Center(child: Text('No messages available'));
+          } else {
+            List<GuardMessages> messages = snapshot.data!;
+
+            return SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(9),
+                child: Column(
+                  children: [
+                    // Search Bar
+                    Padding(
+                      padding: const EdgeInsets.only(left: 14, right: 14),
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          hintText: 'Search messages...',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: Colors.white,
+                        ),
+                      ),
                     ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
+                    const SizedBox(height: 10),
+                    ...messages.map((message) => _buildCard(context, message)),
+                  ],
                 ),
               ),
-              const SizedBox(height: 10),
-              ...List.generate(_filteredData.length, (index) {
-                return _buildCard(context, index, _filteredData[index]);
-              }),
-            ],
-          ),
-        ),
+            );
+          }
+        },
       ),
     );
   }
 
-  Widget _buildCard(BuildContext context, index, dynamic item) {
+  Widget _buildCard(BuildContext context, GuardMessages message) {
     return InkWell(
       onTap: () {
+        // Navigate to ChatPage or any other relevant page
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => item['page']));
+            context, MaterialPageRoute(builder: (context) => ChatPage()));
       },
       child: Padding(
         padding: const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 10),
@@ -89,8 +103,9 @@ class _AllMessagePageState extends State<AllMessagePage> {
           ),
           child: Row(
             children: [
+              // Placeholder image for now, replace with actual image if needed
               Image.asset(
-                item['img'],
+                'assets/images/placeholder_image.png',
                 width: 60,
                 height: 60,
               ),
@@ -100,7 +115,7 @@ class _AllMessagePageState extends State<AllMessagePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(
-                      item['title'],
+                      message.message ?? 'No message',
                       style: const TextStyle(
                           fontSize: 18, fontWeight: FontWeight.bold),
                       overflow: TextOverflow.ellipsis,
@@ -111,18 +126,18 @@ class _AllMessagePageState extends State<AllMessagePage> {
                         Icon(Icons.calendar_month,
                             size: 15, color: Pallete.mainDashColor),
                         Text(
-                          '08-07-2024',
+                          message.date ?? 'Unknown Date',
                           style: TextStyle(fontSize: 12),
                         ),
                         SizedBox(width: 6),
                         Icon(Icons.home,
                             size: 15, color: Pallete.mainDashColor),
                         Text(
-                          'A-1023',
+                          message.category ?? 'No category',
                           style: TextStyle(fontSize: 12),
                         ),
                       ],
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -143,7 +158,7 @@ class _AllMessagePageState extends State<AllMessagePage> {
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

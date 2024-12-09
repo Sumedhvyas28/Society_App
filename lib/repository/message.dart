@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:society_app/main.dart';
+import 'package:society_app/models/guard/message/get_message.dart';
 import 'package:society_app/models/guard/message/post_guard_message.dart';
 import 'package:society_app/network/BaseApiService.dart';
 import 'package:society_app/network/NetworkApiService.dart';
@@ -37,6 +39,29 @@ class GuardMessageRepo {
       print(GlobalData().token);
 
       throw Exception('Error posting message details: $e');
+    }
+  }
+
+  Future<List<GuardMessages>> fetchGuardMessages() async {
+    try {
+      Map<String, String> headers = {
+        "authorization": "Bearer ${GlobalData().token}",
+        "Content-Type": "application/json",
+      };
+
+      dynamic response = await _apiServices.getGetApiWithHeaderResponse(
+        AppUrl.postGuardMessageUrl,
+        headers,
+      );
+
+      if (response != null && response['success'] == true) {
+        List<dynamic> data = response['data'];
+        return data.map((e) => GuardMessages.fromJson(e)).toList();
+      } else {
+        throw Exception("Failed to fetch guard messages");
+      }
+    } catch (e) {
+      throw Exception("Error fetching guard messages: $e");
     }
   }
 }

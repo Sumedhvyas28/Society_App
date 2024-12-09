@@ -79,7 +79,7 @@ class AuthViewModel with ChangeNotifier {
         // Retrieve user role for navigation
         final role = await Provider.of<UserSession>(context, listen: false)
             .getUserRole();
-        navigateTo(role, context);
+        navigateTo(role!, context);
 
         // Display success message
         Utils.flushbarErrorMessage('User login successfully', context);
@@ -101,77 +101,79 @@ class AuthViewModel with ChangeNotifier {
     });
   }
 
-  Future<void> signUp(BuildContext context, dynamic data) async {
-    setSignUpLoading(bool, true);
+  Future<void> registerUser(
+      Map<String, dynamic> data, BuildContext context) async {
+    setLoading(bool, true);
 
-    _myrepo.signUpRepo(data).then((data1) async {
-      print('Sign-Up Details $data1');
+    try {
+      final response = await _myrepo.registerRepo(data);
 
-      if (data1['success'] == true) {
-        // Extract user data from the response
-        dynamic userData = {
-          "token": data1['data']['token'],
-          "name": data1['data']['name'],
-          "email":
-              data1['data']['email'] ?? '', // Email may or may not be provided
-          "role": data1['data']['role'],
-        };
+      // Check if response is successful
+      if (response['success'] == true) {
+        // Extract the user data from the 'data' key in the response
+        var userData = response['data'];
 
-        // Store user data in UserSession
-        await Provider.of<UserSession>(context, listen: false)
-            .storeUserData(userData);
+        // Make sure that the response fields are not null before storing them
+        String name = userData['name']?.toString() ?? 'Unknown';
+        String email = userData['email']?.toString() ?? 'Unknown';
+        String role = userData['role']?.toString() ?? 'Unknown';
+        String token = userData['token']?.toString() ?? 'Unknown';
 
-        // Retrieve the user's role
-        final role = await Provider.of<UserSession>(context, listen: false)
-            .getUserRole();
+        // Debug output to ensure correct values are being extracted
+        print('///');
+        print(response);
+        print('Name: $name');
+        print('Email: $email');
+        print('Role: $role');
+        print('Token: $token');
+        print('///');
 
-        setSignUpLoading(bool, false);
+        // Store user data in the session
+        await Provider.of<UserSession>(context, listen: false).storeUserData({
+          "name": name,
+          "email": email,
+          "role": role,
+          "token": token,
+        });
+
+        // Show success message
+        Utils.flushbarErrorMessage('Registration successful', context);
+        print('User registered successfully');
+        print('Role: $role');
 
         // Navigate based on role
         navigateTo(role, context);
-
-        Utils.flushbarErrorMessage('Sign Up successfully', context);
+      } else {
+        Utils.flushbarErrorMessage('Registration failed', context);
       }
-    }).onError((error, stackTrace) {
-      setSignUpLoading(bool, false);
-      Utils.flushbarErrorMessage('Error: $error', context);
-      print('Sign-Up Error: $error');
-    });
+    } catch (e) {
+      setLoading(bool, false);
+      Utils.flushbarErrorMessage('Error: $e', context);
+      print('Error during registration: $e');
+    }
+
+    setLoading(bool, false);
   }
 
   ///////////////////////
-  void navigateTo(role, context) {
-    if (role == 'society_member'
-        // && token == '63|B608exyr5lZ0Zmqg36jrkAcFOvuis3r2lnrTwGueec4e81eb'
-        ) {
+  void navigateTo(String role, BuildContext context) {
+    print('Navigating based on role: $role');
+
+    if (role == 'society_member') {
       GoRouter.of(context).go('/userdashboard');
-    }
-
-    //
-    else if (role == 'society_admin') {
+    } else if (role == 'society_admin') {
       GoRouter.of(context).go('/societyadminpage');
-    }
-
-    // bp
-    else if (role == 'business_partner') {
+    } else if (role == 'business_partner') {
       GoRouter.of(context).go('/bpdashboard');
-    }
-
-    //super admin
-    else if (role == 'society_admin') {
+    } else if (role == 'super_admin') {
       GoRouter.of(context).go('/superadmindashboard');
-    }
-
-    // vendor
-    else if (role == 'vendor') {
+    } else if (role == 'vendor') {
       GoRouter.of(context).go('/vendorpage');
-    }
-
-    // security page
-    else if (role == 'security_guard') {
+    } else if (role == 'security_guard') {
       GoRouter.of(context).go('/securitypage');
     } else {
-      // Default case if the user name does not match
+      // Default case if the role doesn't match any expected values
+      print('Role not matched, navigating to default');
       GoRouter.of(context).go('/defaultDashboard');
     }
   }

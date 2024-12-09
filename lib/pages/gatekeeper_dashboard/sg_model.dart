@@ -3,6 +3,7 @@ import 'package:society_app/pages/gatekeeper_dashboard/all_messages/chat_page.da
 import 'package:society_app/pages/gatekeeper_dashboard/guard_accessibility.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/guard_message/guard_message.dart';
 import 'package:society_app/pages/gatekeeper_dashboard/guard_notification/guard_notification.dart';
+import 'package:society_app/pages/new.dart';
 import 'package:society_app/pages/user_dashboard/modules/chat.dart';
 
 final List<Map<String, dynamic>> gsGridItems = [
@@ -28,7 +29,7 @@ final List<Map<String, dynamic>> gsGridItems = [
   },
   {
     'image': 'assets/img/gs/message.png',
-    'title': 'Chat',
-    'page': ChatPage(),
+    'title': 'Messages List',
+    'page': NewPage(),
   },
 ];

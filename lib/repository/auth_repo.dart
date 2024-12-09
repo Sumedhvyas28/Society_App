@@ -33,6 +33,19 @@ class AuthRepository {
     }
   }
 
+  Future<dynamic> registerRepo(Map<String, dynamic> data) async {
+    try {
+      // Send POST request to the register API
+      final response = await _apiServices.getPostApiResponse(
+          AppUrl.registerUrl, jsonEncode(data));
+
+      return response; // Returning the response from the API
+    } catch (e) {
+      print('❌❌❌ Register Repo Error: $e');
+      throw e; // Propagate the error
+    }
+  }
+
   Future<UserData> getUserDataRepo(dynamic header) async {
     try {
       dynamic response = await _apiServices.getGetApiWithHeaderResponse(

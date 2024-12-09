@@ -15,11 +15,23 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen> {
   final UserSession _authService = UserSession();
+  bool _startTextAnimation = false;
 
   @override
   void initState() {
     super.initState();
     _navigateAfterDelay();
+
+    _startAnimation();
+  }
+
+  void _startAnimation() {
+    // Delay for 2 seconds to show the logo at the center
+    Future.delayed(const Duration(seconds: 2), () {
+      setState(() {
+        _startTextAnimation = true;
+      });
+    });
   }
 
   Future<void> callNext() async {
@@ -62,11 +74,13 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateAfterDelay() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 5));
 
     final isLoggedIn = await _authService.isLoggedIn();
 
+    // context.go('/login');
     if (isLoggedIn) {
+      context.go('/login');
       callNext();
     } else {
       context.go('/login');
@@ -78,7 +92,37 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: Colors.green,
       body: Center(
-        child: Text('hello user splash'),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Logo remains at the center initially
+            AnimatedPositioned(
+              duration: const Duration(seconds: 1),
+              curve: Curves.easeInOut,
+              left: _startTextAnimation
+                  ? 50 // Moves left when text animation starts
+                  : MediaQuery.of(context).size.width / 2 - 50,
+              child: Image.asset(
+                'assets/img/gs/splash.png', // Replace with your logo path
+                width: 100,
+              ),
+            ),
+            // Text slides in from the right
+            AnimatedPositioned(
+              duration: const Duration(seconds: 1),
+              curve: Curves.easeInOut,
+              right: _startTextAnimation ? 100 : -200,
+              child: Text(
+                "Society Club", // Your text here
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
