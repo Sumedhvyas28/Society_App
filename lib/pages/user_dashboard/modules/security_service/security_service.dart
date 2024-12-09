@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/pages/user_dashboard/modules/security_service/vendor.dart';
+import 'package:society_app/pages/user_dashboard/modules/security_service/visitor.dart';
 import 'package:society_app/pages/user_dashboard/modules/shop%20module/shop_landing.dart';
 
 class SecurityServicePage extends StatefulWidget {
@@ -15,20 +17,20 @@ class _SecurityServicePageState extends State<SecurityServicePage> {
     {
       'image': 'assets/img/dashboard/security_service/guest.png',
       'title': 'Guests/Visitor',
-      'page': ShopLanding(),
+      'page': VisitorPage(),
       'description': 'Manage and track all guest entries effortlessly!'
     },
     {
       'image': 'assets/img/dashboard/security_service/cashback.png',
       'title': 'Vendors',
-      'page': ShopLanding(),
+      'page': VendorTypeVisitor(),
       'description': 'Access a list of approved vendors for services!'
     },
     {
-      'image': 'assets/img/dashboard/security_service/note.png',
-      'title': 'Note Status',
-      'page': ShopLanding(),
-      'description': 'View and track details for all the deliveries.'
+      'image': 'assets/img/dashboard/security_service/cashback.png',
+      'title': 'Vendors',
+      'page': VendorTypeVisitor(),
+      'description': 'Access a list of approved vendors for services!'
     },
   ];
 
@@ -36,78 +38,64 @@ class _SecurityServicePageState extends State<SecurityServicePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Pallete.mainDashColor,
-      appBar: CustomAppBar(title: 'Security Service'),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: ListView.builder(
-          itemCount: securityItems.length,
-          itemBuilder: (context, index) {
-            return InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => securityItems[index]['page']),
-                );
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SizedBox(
-                  height: 90,
-                  child: Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+      appBar: CustomAppBar(title: 'Visitor Details'),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(9),
+          child: Column(
+              children: List.generate(securityItems.length, (index) {
+            return _buildCard(context, index, securityItems[index]);
+          })),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard(BuildContext context, index, dynamic item) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => securityItems[index]['page']));
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8, bottom: 8, left: 16, right: 10),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Image.asset(
+                securityItems[index]['image'],
+                width: 60,
+                height: 60,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      securityItems[index]['title'],
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                    elevation: 3,
-                    child: Row(
-                      children: [
-                        // Image with proper height and width
-                        Image.asset(
-                          securityItems[index]['image'],
-                          height: 50,
-                          width: 50, // Adjusted width
-                        ),
-                        // Expanded to avoid overflow
-                        Expanded(
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  securityItems[index]['title'],
-                                  style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                  overflow:
-                                      TextOverflow.ellipsis, // Handle overflow
-                                ),
-                                Text(
-                                  securityItems[index]['description'],
-                                  style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.normal),
-                                  overflow:
-                                      TextOverflow.ellipsis, // Handle overflow
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(Icons.arrow_right_alt),
-                        ),
-                      ],
+                    Text(
+                      securityItems[index]['description'],
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
-                  ),
+                  ],
                 ),
               ),
-            );
-          },
+              const Icon(Icons.arrow_forward_ios),
+            ],
+          ),
         ),
       ),
     );

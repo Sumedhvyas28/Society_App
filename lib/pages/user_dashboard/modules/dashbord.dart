@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/models/dummy/grid_items.dart';
 import 'package:society_app/notification_services.dart';
 import 'package:society_app/pages/user_dashboard/edit_profile.dart';
 import 'package:society_app/pages/user_dashboard/modules/notification.dart';
 import 'package:society_app/pages/user_dashboard/modules/more.dart';
+import 'package:society_app/view_model/guard/features.dart';
+import 'package:society_app/view_model/user_session.dart';
 
 class DashbordPage extends StatefulWidget {
   const DashbordPage({super.key});
@@ -20,12 +23,24 @@ class _DashbordPageState extends State<DashbordPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    initialTask();
+  }
+
+  void initialTask() {
     notificationServices.requestNotificationPermission();
-    notificationServices.isTokenRefresh();
-    notificationServices.getDeviceToken().then((value) {
-      print('device token');
-      print(value);
-    });
+    notificationServices.firebaseInit();
+    notificationServices.getDeviceToken().then(
+      (value) {
+        if (value != null) {
+          Provider.of<GuardFeatures>(context, listen: false)
+              .updateDeviceTokenApi(value);
+          print(value);
+          print(GlobalData().token);
+        } else {
+          print('Device token is null');
+        }
+      },
+    );
   }
 
   @override
