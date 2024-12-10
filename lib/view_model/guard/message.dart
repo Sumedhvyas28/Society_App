@@ -31,6 +31,7 @@ class MessageFeatures with ChangeNotifier {
     try {
       guardMessages = await _messageRepo.fetchGuardMessages();
     } catch (e) {
+      print(guardMessages);
       debugPrint('Error fetching guard messages: $e');
     } finally {
       isLoading = false;

@@ -73,6 +73,11 @@ class MoreSectionState extends State<MoreSection> {
                               SizedBox(
                                 height: screenWidth * 0.01,
                               ),
+                              Text(userDetails?.data?.userDetail?.societyName ??
+                                  'Add Phone Number'),
+                              SizedBox(
+                                height: screenWidth * 0.01,
+                              ),
                               Text(userDetails?.data?.user?.email ??
                                   'Add Email'),
                             ],
@@ -173,6 +178,11 @@ class MoreSectionState extends State<MoreSection> {
                       onPressed: () async {
                         await userPreference.signOut().then((value) {
                           context.go('/login');
+                          print('///////');
+                          print(GlobalData().token);
+                          print(GlobalData().name);
+                          print(GlobalData().email);
+                          print('///////');
                         });
                       },
                     ),

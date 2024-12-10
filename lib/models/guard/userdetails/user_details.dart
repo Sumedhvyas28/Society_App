@@ -82,9 +82,9 @@ class UserDetail {
   dynamic? birthDate;
   dynamic? age;
   dynamic? gender;
-  List<dynamic>? hobbies;
+  dynamic? hobbies;
   dynamic? jobTitle;
-  List<dynamic>? languagesSpoken;
+  dynamic? languagesSpoken;
 
   UserDetail(
       {this.description,

@@ -1,22 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/models/guard/visitor_details/visitor_details.dart';
-import 'package:society_app/view_model/guard/features.dart';
 import 'package:society_app/view_model/guard/guard_prop.dart';
+import 'package:society_app/view_model/user_session.dart';
+import 'package:http/http.dart' as http;
 
-class GuardNotificationPage extends StatefulWidget {
-  const GuardNotificationPage({super.key});
+class VendorTypeVisitor extends StatefulWidget {
+  const VendorTypeVisitor({super.key});
 
   @override
-  State<GuardNotificationPage> createState() => _GuardNotificationPageState();
+  State<VendorTypeVisitor> createState() => _VendorTypeVisitorState();
 }
 
-class _GuardNotificationPageState extends State<GuardNotificationPage> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-
+class _VendorTypeVisitorState extends State<VendorTypeVisitor> {
   @override
   void initState() {
     super.initState();
@@ -28,9 +28,11 @@ class _GuardNotificationPageState extends State<GuardNotificationPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final TextEditingController _searchController = TextEditingController();
+    String _searchQuery = '';
 
     return Scaffold(
-      appBar: CustomAppBar(title: 'Visitor Details'),
+      appBar: CustomAppBar(title: 'Vendor Visitors'),
       backgroundColor: Pallete.mainDashColor,
       body: Padding(
         padding: EdgeInsets.all(screenWidth * 0.02),
@@ -90,9 +92,11 @@ class _GuardNotificationPageState extends State<GuardNotificationPage> {
                     );
                   }
 
-                  // Filter visitors based on the search query
+                  // Filter visitors based on the search query and visitor type
                   final filteredVisitors =
                       viewModel.visitorDetails.where((visitor) {
+                    final typeMatch =
+                        visitor.visitorType?.toLowerCase() == 'vendor';
                     final nameMatch = visitor.visitorName
                             ?.toLowerCase()
                             .contains(_searchQuery) ??
@@ -100,13 +104,13 @@ class _GuardNotificationPageState extends State<GuardNotificationPage> {
                     final statusMatch =
                         visitor.status?.toLowerCase().contains(_searchQuery) ??
                             false;
-                    return nameMatch || statusMatch;
+                    return typeMatch && (nameMatch || statusMatch);
                   }).toList();
 
                   if (filteredVisitors.isEmpty) {
                     return Center(
                       child: Text(
-                        'No matching visitors found.',
+                        'No matching vendors found.',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: screenWidth * 0.04,
@@ -145,6 +149,10 @@ class ExpandableVisitorCard extends StatefulWidget {
 
 class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
   bool isExpanded = false;
+
+  // Dropdown options
+  final List<String> dropdownOptions = ['Approved', 'Rejected'];
+  String? selectedOption;
 
   @override
   Widget build(BuildContext context) {
@@ -201,42 +209,92 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                           ),
                         ],
                       ),
+                      Text(
+                        widget.visitor.visitorType ?? 'N/A',
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.035,
+                          color: Colors.grey,
+                        ),
+                      ),
                     ],
                   ),
                   const Spacer(),
-                  TextButton(
-                    onPressed: () {
-                      // Handle action
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: _getStatusColor(widget.visitor.status),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: screenWidth * 0.03,
-                        vertical: screenWidth * 0.015,
+                  DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: selectedOption,
+                      icon: const Icon(Icons.arrow_drop_down,
+                          color: Colors.black),
+                      hint: Text(
+                        'Pending',
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.040,
+                          color: Colors.orange,
+                        ),
                       ),
-                    ),
-                    child: Text(
-                      widget.visitor.status ?? 'N/A',
-                      style: const TextStyle(color: Colors.white),
+                      items: dropdownOptions.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: TextStyle(fontSize: screenWidth * 0.035),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (newValue) async {
+                        setState(() {
+                          selectedOption = newValue;
+                        });
+
+                        if (newValue != null) {
+                          final TextEditingController commentController =
+                              TextEditingController();
+
+                          // Show dialog to collect optional comment
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Add Comment (Optional)"),
+                                content: TextField(
+                                  controller: commentController,
+                                  decoration: InputDecoration(
+                                    hintText:
+                                        "Enter your comment here (optional)",
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); // Proceed without comment
+                                    },
+                                    child: Text("Skip"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(commentController.text);
+                                    },
+                                    child: Text("Submit"),
+                                  ),
+                                ],
+                              );
+                            },
+                          ).then((comment) async {
+                            await _updateVisitorStatus(newValue, comment ?? "");
+                          });
+                        }
+                      },
                     ),
                   ),
                 ],
               ),
               if (isExpanded) ...[
                 SizedBox(height: screenWidth * 0.02),
-                Text('Purpose: ${widget.visitor.purposeOfVisit ?? 'N/A'}'),
-                SizedBox(height: screenWidth * 0.02),
-                Text('Type: ${widget.visitor.visitorType ?? 'N/A'}'),
-                SizedBox(height: screenWidth * 0.02),
                 Text(
-                    'Contact Number: ${widget.visitor.contactNumber ?? 'N/A'}'),
-                SizedBox(height: screenWidth * 0.02),
-                Text('Duration: ${widget.visitor.expectedDuration ?? 'N/A'}'),
-                SizedBox(height: screenWidth * 0.02),
-                Text('Note: ${widget.visitor.additionalNotes ?? 'N/A'}'),
-                SizedBox(height: screenWidth * 0.02),
-                Text('Note: ${widget.visitor.commentMessage ?? 'N/A'}'),
-                Text('Note: ${widget.visitor.commentMessage ?? 'N/A'}'),
+                  'Purpose: ${widget.visitor.purposeOfVisit ?? 'N/A'}',
+                  style: TextStyle(fontSize: screenWidth * 0.035),
+                ),
               ],
             ],
           ),
@@ -245,16 +303,41 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
     );
   }
 
-  Color _getStatusColor(String? status) {
-    switch (status?.toLowerCase()) {
-      case 'approved':
-        return Colors.green;
-      case 'pending':
-        return Colors.orange;
-      case 'rejected':
-        return Colors.red;
-      default:
-        return Colors.grey;
+  Future<void> _updateVisitorStatus(String status, String comment) async {
+    final url =
+        'https://stagging.intouchsoftwaresolution.com/api/visitor-status/${widget.visitor.id}';
+
+    final body = json.encode({
+      'status': status,
+      'comment_message': comment,
+    });
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          "authorization": "Bearer ${GlobalData().token}",
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Status updated successfully')),
+        );
+      } else {
+        print(response.body);
+        print(response);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update status')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
     }
   }
 }

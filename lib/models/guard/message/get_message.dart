@@ -1,29 +1,28 @@
 class GuardMessages {
-  int? id;
+  dynamic? id;
   String? message;
   String? urgencyLevel;
   String? category;
   String? date;
-  String? additionalNotes;
-  String? attachment;
+  Null? additionalNotes;
+  Null? attachment;
   String? createdAt;
   String? updatedAt;
   String? fromGuardName;
   String? toGuardName;
 
-  GuardMessages({
-    this.id,
-    this.message,
-    this.urgencyLevel,
-    this.category,
-    this.date,
-    this.additionalNotes,
-    this.attachment,
-    this.createdAt,
-    this.updatedAt,
-    this.fromGuardName,
-    this.toGuardName,
-  });
+  GuardMessages(
+      {this.id,
+      this.message,
+      this.urgencyLevel,
+      this.category,
+      this.date,
+      this.additionalNotes,
+      this.attachment,
+      this.createdAt,
+      this.updatedAt,
+      this.fromGuardName,
+      this.toGuardName});
 
   GuardMessages.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -40,18 +39,18 @@ class GuardMessages {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'message': message,
-      'urgency_level': urgencyLevel,
-      'category': category,
-      'date': date,
-      'additional_notes': additionalNotes,
-      'attachment': attachment,
-      'created_at': createdAt,
-      'updated_at': updatedAt,
-      'from_guard_name': fromGuardName,
-      'to_guard_name': toGuardName,
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['message'] = this.message;
+    data['urgency_level'] = this.urgencyLevel;
+    data['category'] = this.category;
+    data['date'] = this.date;
+    data['additional_notes'] = this.additionalNotes;
+    data['attachment'] = this.attachment;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['from_guard_name'] = this.fromGuardName;
+    data['to_guard_name'] = this.toGuardName;
+    return data;
   }
 }

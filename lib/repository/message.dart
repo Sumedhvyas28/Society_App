@@ -42,6 +42,20 @@ class GuardMessageRepo {
     }
   }
 
+  dynamic cleanData(dynamic json) {
+    if (json is List) {
+      return json.map((e) => cleanData(e)).toList();
+    } else if (json is Map) {
+      return json.map((key, value) {
+        if (value is String && int.tryParse(value) != null) {
+          return MapEntry(key, int.parse(value));
+        }
+        return MapEntry(key, cleanData(value));
+      });
+    }
+    return json;
+  }
+
   Future<List<GuardMessages>> fetchGuardMessages() async {
     try {
       Map<String, String> headers = {
@@ -55,9 +69,10 @@ class GuardMessageRepo {
       );
 
       if (response != null && response['success'] == true) {
-        List<dynamic> data = response['data'];
+        List<dynamic> data = cleanData(response['data']);
         return data.map((e) => GuardMessages.fromJson(e)).toList();
       } else {
+        print(response);
         throw Exception("Failed to fetch guard messages");
       }
     } catch (e) {

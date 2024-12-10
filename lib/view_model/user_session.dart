@@ -38,7 +38,20 @@ class UserSession with ChangeNotifier {
 
   Future<void> signOut() async {
     final prefs = await SharedPreferences.getInstance();
+    print('Removing userData from SharedPreferences...');
     await prefs.remove('userData');
+
+    GlobalData().updateUserData(
+      newId: '',
+      newName: '',
+      newEmail: '',
+      newPhnNo: '',
+      newCountry: '',
+      newRole: '',
+      newApiToken: '',
+    );
+
+    print('User data cleared. Current token: ${GlobalData().token}');
   }
 
   Future<bool> isLoggedIn() async {

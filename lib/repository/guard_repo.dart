@@ -284,11 +284,14 @@ class GuardRepo {
       );
 
       if (response != null) {
+        print(GlobalData().token);
+
         return getUserDetails.fromJson(response);
       } else {
         throw Exception("Failed to fetch user details.");
       }
     } catch (e) {
+      print(GlobalData().token);
       throw Exception("Error fetching user details: $e");
     }
   }

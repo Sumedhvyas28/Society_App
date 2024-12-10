@@ -11,17 +11,33 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> {
+  bool isLoading = true;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<GuardFeatures>(context, listen: false).getUserDetailsApi();
+      fetchUserDetails();
+    });
+  }
+
+  void fetchUserDetails() async {
+    await Provider.of<GuardFeatures>(context, listen: false)
+        .getUserDetailsApi();
+    setState(() {
+      isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final userDetails = Provider.of<GuardFeatures>(context).userDetails;
+
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -35,7 +51,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ),
       ),
       body: userDetails == null
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: Text('Failed to load user details'))
           : SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,8 +105,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     leading: const Icon(Icons.email),
                     title: Text(userDetails.data?.user?.email ?? 'Add Email'),
                   ),
-
-                  // More About You Section
+                  ListTile(
+                    leading: const Icon(Icons.email),
+                    title: Text(userDetails.data?.user?.email ?? 'Add Email'),
+                  ),
                 ],
               ),
             ),

@@ -1,13 +1,16 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:society_app/data/response/api_response.dart';
 import 'package:society_app/models/user_data.dart';
+import 'package:society_app/notification_services.dart';
 import 'package:society_app/repository/auth_repo.dart';
 import 'package:society_app/utils/utils.dart';
 import 'package:society_app/view_model/get_main.dart';
+import 'package:society_app/view_model/guard/features.dart';
 import 'package:society_app/view_model/user_session.dart';
 
 class AuthViewModel with ChangeNotifier {
@@ -76,6 +79,10 @@ class AuthViewModel with ChangeNotifier {
         await Provider.of<UserSession>(context, listen: false)
             .storeUserData(userData);
 
+        // Fetch and update user details after storing session
+        await Provider.of<GuardFeatures>(context, listen: false)
+            .getUserDetailsApi();
+
         // Retrieve user role for navigation
         final role = await Provider.of<UserSession>(context, listen: false)
             .getUserRole();
@@ -83,15 +90,11 @@ class AuthViewModel with ChangeNotifier {
 
         // Display success message
         Utils.flushbarErrorMessage('User login successfully', context);
-        print(authToken);
-        print('token');
+        print('Token: ${GlobalData().token}');
 
         setLoading(bool, false);
-
-        // Navigate based on user role
       } else {
         setLoading(bool, false);
-
         Utils.flushbarErrorMessage('Invalid login response', context);
       }
     }).onError((error, stackTrace) {
@@ -107,28 +110,16 @@ class AuthViewModel with ChangeNotifier {
 
     try {
       final response = await _myrepo.registerRepo(data);
-
-      // Check if response is successful
       if (response['success'] == true) {
-        // Extract the user data from the 'data' key in the response
         var userData = response['data'];
 
-        // Make sure that the response fields are not null before storing them
+        // Extract user details
         String name = userData['name']?.toString() ?? 'Unknown';
         String email = userData['email']?.toString() ?? 'Unknown';
         String role = userData['role']?.toString() ?? 'Unknown';
         String token = userData['token']?.toString() ?? 'Unknown';
 
-        // Debug output to ensure correct values are being extracted
-        print('///');
-        print(response);
-        print('Name: $name');
-        print('Email: $email');
-        print('Role: $role');
-        print('Token: $token');
-        print('///');
-
-        // Store user data in the session
+        // Store user data in session
         await Provider.of<UserSession>(context, listen: false).storeUserData({
           "name": name,
           "email": email,
@@ -136,23 +127,43 @@ class AuthViewModel with ChangeNotifier {
           "token": token,
         });
 
-        // Show success message
-        Utils.flushbarErrorMessage('Registration successful', context);
-        print('User registered successfully');
-        print('Role: $role');
+        // Update GlobalData immediately
+        GlobalData().updateUserData(
+          newId: userData['id'] ?? '',
+          newName: name,
+          newEmail: email,
+          newPhnNo: userData['phone'] ?? '',
+          newCountry: userData['country'] ?? '',
+          newRole: role,
+          newApiToken: token,
+        );
 
-        // Navigate based on role
+        print('User registered and stored: ${GlobalData().name}');
+
+        // Fetch user details and update device token
+        await Provider.of<GuardFeatures>(context, listen: false)
+            .getUserDetailsApi();
+
+        String? deviceToken = await FirebaseMessaging.instance.getToken();
+        if (deviceToken != null) {
+          await Provider.of<GuardFeatures>(context, listen: false)
+              .updateDeviceTokenApi(deviceToken);
+        }
+
+        // Navigate to appropriate page
         navigateTo(role, context);
-      } else {
+        Utils.flushbarErrorMessage('Registration successful', context);
+      }
+
+      {
         Utils.flushbarErrorMessage('Registration failed', context);
       }
     } catch (e) {
-      setLoading(bool, false);
       Utils.flushbarErrorMessage('Error: $e', context);
       print('Error during registration: $e');
+    } finally {
+      setLoading(bool, false);
     }
-
-    setLoading(bool, false);
   }
 
   ///////////////////////

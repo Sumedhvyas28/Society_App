@@ -6,6 +6,7 @@ import 'package:society_app/notification_services.dart';
 import 'package:society_app/res/component/round_button.dart';
 import 'package:society_app/utils/utils.dart';
 import 'package:society_app/view_model/auth_view_model.dart';
+import 'package:society_app/view_model/user_session.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -41,6 +42,13 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('In login');
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    print(GlobalData().token);
+    print(GlobalData().name);
+    print(GlobalData().email);
+    print('///////');
     final authViewModel = Provider.of<AuthViewModel>(context);
     final h = MediaQuery.of(context).size.height;
     final w = MediaQuery.of(context).size.width;
@@ -89,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
           // Animated Text (position and content change based on sheet expansion)
           AnimatedPositioned(
             duration: const Duration(seconds: 1),
-            top: _isSheetExpanded ? h * 0.350 : 600,
+            top: _isSheetExpanded ? h * 0.300 : 600,
             left: 0,
             right: 0,
             child: Container(
@@ -143,104 +151,117 @@ class _LoginPageState extends State<LoginPage> {
             bottom: _isSheetExpanded ? 0 : -h * 3,
             left: 0,
             right: 0,
-            child: SingleChildScrollView(
-              // Allow scrolling when keyboard appears
-              padding: EdgeInsets.only(
-                  bottom: keyboardHeight), // Add padding for keyboard
-              child: Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                child: SafeArea(
-                  child: Padding(
-                    padding: EdgeInsets.all(w * 0.05), // Dynamic padding
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Enter Your Account Details',
-                          style: TextStyle(fontSize: w * 0.06),
-                        ),
-                        const SizedBox(height: 20),
-                        TextField(
-                          focusNode: _emailFocusNode,
-                          controller: emailController,
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                            labelText: _isEmailFocused ? null : 'Email',
-                            prefixIcon: Icon(Icons.email),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+            child: Container(
+              height: screenHeight * 0.58, // Maintain existing height
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: screenHeight * 0.52,
+                      maxHeight: screenHeight * 0.8,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(
+                        top: w * 0.05,
+                        left: w * 0.05,
+                        right: w * 0.05,
+                        bottom: keyboardHeight > 0 ? keyboardHeight : w * 0.05,
+                      ),
+                      child: IntrinsicHeight(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Enter Your Account Details',
+                              style: TextStyle(fontSize: w * 0.06),
                             ),
-                          ),
-                          onSubmitted: (value) {
-                            Utils.fieldFocusChange(
-                                context, _emailFocusNode, _passwordFocusNode);
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        TextField(
-                          obscureText: _obscureText,
-                          controller: passwordController,
-                          decoration: InputDecoration(
-                            labelText: 'Password',
-                            prefixIcon: Icon(Icons.lock),
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _obscureText
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
+                            const SizedBox(height: 20),
+                            TextField(
+                              focusNode: _emailFocusNode,
+                              controller: emailController,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: InputDecoration(
+                                labelText: _isEmailFocused ? null : 'Email',
+                                prefixIcon: Icon(Icons.email),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  _obscureText = !_obscureText;
-                                });
+                              onSubmitted: (value) {
+                                Utils.fieldFocusChange(context, _emailFocusNode,
+                                    _passwordFocusNode);
                               },
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                            const SizedBox(height: 20),
+                            TextField(
+                              obscureText: _obscureText,
+                              controller: passwordController,
+                              decoration: InputDecoration(
+                                labelText: 'Password',
+                                prefixIcon: Icon(Icons.lock),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscureText
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscureText = !_obscureText;
+                                    });
+                                  },
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              // Handle forgot password action
-                            },
-                            child: Text(
-                              'Forgot Password?',
-                              style: TextStyle(
-                                  fontSize: w * 0.04, color: Colors.black),
+                            const SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () {
+                                  // Handle forgot password action
+                                },
+                                child: Text(
+                                  'Forgot Password?',
+                                  style: TextStyle(
+                                      fontSize: w * 0.04, color: Colors.black),
+                                ),
+                              ),
                             ),
-                          ),
+                            const SizedBox(height: 20),
+                            RoundButton(
+                              title: 'Login',
+                              loading: authViewModel.loading,
+                              onPressed: () {
+                                Map data = {
+                                  "email": emailController.text.toString(),
+                                  "password":
+                                      passwordController.text.toString(),
+                                };
+                                authViewModel.loginRepo(data, context);
+                              },
+                            ),
+                            const SizedBox(height: 10),
+                            InkWell(
+                              onTap: () {
+                                GoRouter.of(context).go('/signup');
+                              },
+                              child: Text(
+                                "Don't have an account? Sign Up",
+                                style: TextStyle(
+                                    fontSize: w * 0.04,
+                                    color: Colors.grey[800]),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 20),
-                        RoundButton(
-                          title: 'Login',
-                          loading: authViewModel.loading,
-                          onPressed: () {
-                            Map data = {
-                              "email": emailController.text.toString(),
-                              "password": passwordController.text.toString(),
-                            };
-                            authViewModel.loginRepo(data, context);
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        InkWell(
-                          onTap: () {
-                            GoRouter.of(context).go('/signup');
-                          },
-                          child: Text(
-                            "Don't have an account? Sign Up",
-                            style: TextStyle(
-                                fontSize: w * 0.04, color: Colors.grey[800]),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
                 ),

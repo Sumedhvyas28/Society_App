@@ -1,8 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:society_app/constant/api_constants/routes/app_url.dart';
 import 'package:society_app/constant/pallete.dart';
+import 'package:society_app/models/guard/visitor_data.dart';
 import 'package:society_app/view_model/guard/features.dart';
 import 'package:society_app/view_model/user/user_viewmodel.dart';
+import 'package:society_app/view_model/user_session.dart';
+import 'package:http/http.dart' as http;
 
 class UserEditProfile extends StatefulWidget {
   const UserEditProfile({super.key});
@@ -12,6 +20,9 @@ class UserEditProfile extends StatefulWidget {
 }
 
 class _UserEditProfileState extends State<UserEditProfile> {
+  var selectedValue;
+  String? _selectedVisitorName;
+
   @override
   void initState() {
     super.initState();
@@ -19,6 +30,36 @@ class _UserEditProfileState extends State<UserEditProfile> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<UserFeatures>(context, listen: false).getUserDetailsApi();
     });
+  }
+
+  Future<List<Buildings>> getPost() async {
+    try {
+      final response = await http.get(
+        Uri.parse(AppUrl.getVisitorSocietyUrl),
+        headers: {
+          "authorization": "Bearer ${GlobalData().token}",
+          "Content-Type": "application/json",
+        },
+      );
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body);
+
+        if (body['buildings'] != null) {
+          final buildingsList = body['buildings'] as List<dynamic>;
+          return buildingsList.map((e) {
+            return Buildings.fromJson(e as Map<String, dynamic>);
+          }).toList();
+        } else {
+          throw Exception('Buildings key is null or missing');
+        }
+      } else {
+        throw Exception('Failed to fetch data: ${response.statusCode}');
+      }
+    } on SocketException {
+      throw Exception('No internet connection');
+    } catch (e) {
+      throw Exception('Error fetching data: $e');
+    }
   }
 
   void _showEditDialog(
@@ -235,28 +276,134 @@ class _UserEditProfileState extends State<UserEditProfile> {
                     ),
                   ),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.apartment),
-                  title: Text(
-                      userDetails.data?.userDetail?.buildingName?.toString() ??
-                          'Add Building Name'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () => _showEditDialog(
-                      'Building Name',
-                      userDetails.data?.userDetail?.buildingName ??
-                          'Add Building Name',
-                      (newValue) {
-                        Provider.of<UserFeatures>(context, listen: false)
-                            .postUserDetailsApi({"building_name": newValue});
-                      },
-                    ),
-                  ),
+                // ListTile(
+                //   leading: const Icon(Icons.apartment),
+                //   title: Text(
+                //       userDetails.data?.userDetail?.buildingName?.toString() ??
+                //           'Add Building Name ss'),
+                //   trailing: IconButton(
+                //     icon: const Icon(Icons.edit),
+                //     onPressed: () => _showEditDialog(
+                //       'Building Name',
+                //       userDetails.data?.userDetail?.buildingName ??
+                //           'Add Building Name',
+                //       (newValue) {
+                //         Provider.of<UserFeatures>(context, listen: false)
+                //             .postUserDetailsApi({"building_id": newValue});
+                //       },
+                //     ),
+                //   ),
+                // ),
+
+                FutureBuilder<List<Buildings>>(
+                  future: getPost(), // Future to fetch buildings
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Text('No buildings available');
+                    } else {
+                      final buildingsList = snapshot.data!;
+                      final selectedBuilding = buildingsList.firstWhere(
+                        (building) =>
+                            building.buildingId.toString() == selectedValue,
+                        orElse: () => buildingsList.first,
+                      );
+
+                      return StatefulBuilder(
+                        // Wrap in StatefulBuilder to dynamically update UI
+                        builder: (context, setState) {
+                          return Column(
+                            children: [
+                              ListTile(
+                                leading: const Icon(Icons.house_outlined),
+                                title: Text(
+                                  selectedBuilding.buildingName ??
+                                      'Select a Building',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                trailing: Icon(Icons.arrow_drop_down),
+                                onTap: () async {
+                                  final selected = await showDialog<Buildings>(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Dialog(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: TextField(
+                                                decoration: InputDecoration(
+                                                  labelText: 'Search Building',
+                                                  prefixIcon:
+                                                      Icon(Icons.search),
+                                                  border: OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                  ),
+                                                ),
+                                                onChanged: (value) {
+                                                  // Add a real-time search filter logic here if required
+                                                },
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: ListView.builder(
+                                                itemCount: buildingsList.length,
+                                                itemBuilder: (context, index) {
+                                                  final building =
+                                                      buildingsList[index];
+                                                  return ListTile(
+                                                    title: Text(
+                                                        building.buildingName ??
+                                                            'Unnamed'),
+                                                    onTap: () {
+                                                      Navigator.pop(
+                                                          context, building);
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  );
+
+                                  if (selected != null) {
+                                    setState(() {
+                                      selectedValue =
+                                          selected.buildingId.toString();
+                                      _selectedVisitorName =
+                                          null; // Reset dependent dropdown state
+                                      // Trigger backend call to update building ID
+                                      Provider.of<UserFeatures>(context,
+                                              listen: false)
+                                          .postUserDetailsApi(
+                                        {"building_id": selectedValue},
+                                      );
+                                    });
+                                  }
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
                 ),
+
                 ListTile(
                   leading: const Icon(Icons.house_outlined),
                   title: Text(userDetails.data?.userDetail?.apartmentNo ??
-                      'Add Building Name'),
+                      'Add Appartment No'),
                   trailing: IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () => _showEditDialog(
@@ -281,7 +428,8 @@ class _UserEditProfileState extends State<UserEditProfile> {
                     icon: const Icon(Icons.edit),
                     onPressed: () => _showEditDialog(
                       'Birth Date',
-                      userDetails.data?.userDetail?.birthDate ?? '',
+                      userDetails.data?.userDetail?.birthDate ??
+                          'Add your birth Date',
                       (newValue) {
                         Provider.of<UserFeatures>(context, listen: false)
                             .postUserDetailsApi({"birth_date": newValue});
@@ -342,16 +490,14 @@ class _UserEditProfileState extends State<UserEditProfile> {
                   ),
                 ),
                 ListTile(
-                  leading: const Icon(Icons.sports),
-                  title: Text(
-                      userDetails.data?.userDetail?.hobbies?.join(', ') ??
-                          'Add Hobbies'),
+                  leading: const Icon(Icons.work),
+                  title:
+                      Text(userDetails.data?.userDetail?.hobbies ?? 'Hobbies'),
                   trailing: IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () => _showEditDialog(
-                      'hobbies',
-                      userDetails.data?.userDetail?.hobbies?.join(', ') ??
-                          'hobbies',
+                      'Hobbies',
+                      userDetails.data?.userDetail?.hobbies ?? 'No title',
                       (newValue) {
                         Provider.of<UserFeatures>(context, listen: false)
                             .postUserDetailsApi({"hobbies": newValue});
@@ -359,21 +505,37 @@ class _UserEditProfileState extends State<UserEditProfile> {
                     ),
                   ),
                 ),
+                // ListTile(
+                //   leading: const Icon(Icons.sports),
+                //   title: Text(
+                //       userDetails.data?.userDetail?.hobbies?.join(', ') ??
+                //           'Add Hobbies'),
+                //   trailing: IconButton(
+                //     icon: const Icon(Icons.edit),
+                //     onPressed: () => _showEditDialog(
+                //       'hobbies',
+                //       userDetails.data?.userDetail?.hobbies?.join(', ') ??
+                //           'hobbies',
+                //       (newValue) {
+                //         Provider.of<UserFeatures>(context, listen: false)
+                //             .postUserDetailsApi({"hobbies": newValue});
+                //       },
+                //     ),
+                //   ),
+                // ),
 
                 // Languages Section
                 _buildSectionHeader('Languages Spoken'),
                 ListTile(
-                  leading: const Icon(Icons.language),
-                  title: Text(userDetails.data?.userDetail?.languagesSpoken
-                          ?.join(', ') ??
-                      'Add Languages'),
+                  leading: const Icon(Icons.work),
+                  title: Text(userDetails.data?.userDetail?.languagesSpoken ??
+                      'Language Spoken'),
                   trailing: IconButton(
                     icon: const Icon(Icons.edit),
                     onPressed: () => _showEditDialog(
-                      'Languages',
-                      userDetails.data?.userDetail?.languagesSpoken
-                              ?.join(', ') ??
-                          'l',
+                      'Language Spoken',
+                      userDetails.data?.userDetail?.languagesSpoken ??
+                          'Language Spoken',
                       (newValue) {
                         Provider.of<UserFeatures>(context, listen: false)
                             .postUserDetailsApi({"languages_spoken": newValue});

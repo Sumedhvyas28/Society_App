@@ -18,44 +18,46 @@ class SecurityDashboardpage extends StatefulWidget {
 
 class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
   NotificationServices notificationServices = NotificationServices();
+  bool isLoading = true;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     initialTask();
   }
 
-  void initialTask() {
+  void initialTask() async {
     notificationServices.requestNotificationPermission();
-    notificationServices.firebaseInit();
-    notificationServices.getDeviceToken().then(
+    notificationServices.firebaseInit(context);
+    await notificationServices.getDeviceToken().then(
       (value) {
         if (value != null) {
           Provider.of<GuardFeatures>(context, listen: false)
               .updateDeviceTokenApi(value);
           print(value);
-          print(GlobalData().token);
-          print('f/f.qf;qf/qwfq/');
-
-          print(GlobalData().role);
         } else {
           print('Device token is null');
         }
       },
     );
+    setState(() {
+      isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Pallete.mainDashColor,
       body: Column(
         children: [
-          const SizedBox(
-            height: 50,
-          ),
-          //seach bar
+          const SizedBox(height: 50),
           Container(
             margin: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -71,23 +73,18 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => EditProfilePage()),
+                            builder: (context) => const EditProfilePage()),
                       );
                     },
-                    icon: Icon(
-                      Icons.person,
-                      size: 40,
-                    ),
+                    icon: const Icon(Icons.person, size: 40),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: TextField(
-                      style: TextStyle(
-                        color: Colors.black,
-                      ),
+                      style: const TextStyle(color: Colors.black),
                       decoration: InputDecoration(
                         hintText: GlobalData().name,
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                           color: Colors.black,
                           fontSize: 20,
                         ),
@@ -96,29 +93,25 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(
-                      Icons.notifications,
-                      color: Colors.black,
-                      size: 40,
-                    ),
+                    icon: const Icon(Icons.notifications,
+                        color: Colors.black, size: 40),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => GuardNoitificationIconPage()),
+                            builder: (context) =>
+                                const GuardNoitificationIconPage()),
                       );
                     },
                   ),
                   IconButton(
-                    icon: const Icon(
-                      Icons.more_vert_outlined,
-                      color: Colors.black,
-                      size: 40,
-                    ),
+                    icon: const Icon(Icons.more_vert_outlined,
+                        color: Colors.black, size: 40),
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MoreSection()),
+                        MaterialPageRoute(
+                            builder: (context) => const MoreSection()),
                       );
                     },
                   ),
@@ -130,7 +123,7 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 60,
                   mainAxisSpacing: 10,
@@ -163,9 +156,9 @@ class _SecurityDashboardpageState extends State<SecurityDashboardpage> {
                           ),
                           Text(
                             gsGridItems[index]['title'],
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 12, fontWeight: FontWeight.bold),
-                          )
+                          ),
                         ],
                       ),
                     ),

@@ -45,7 +45,7 @@ class App extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GuardFeatures()),
         ChangeNotifierProvider(create: (_) => MessageFeatures()),
         ChangeNotifierProvider(
-          create: (_) => NotificationServices()..firebaseInit(),
+          create: (_) => NotificationServices()..firebaseInit(context),
         ),
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => UserFeatures()),

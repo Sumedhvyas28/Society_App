@@ -28,7 +28,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _nameController = TextEditingController();
 
-  late List<loll.Data> societies;
+  late List<loll.Data> societies = [];
   bool isLoading = true;
 
   final List<String> _nameOptions = [

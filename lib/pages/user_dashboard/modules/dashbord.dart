@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/models/dummy/grid_items.dart';
 import 'package:society_app/notification_services.dart';
 import 'package:society_app/pages/user_dashboard/edit_profile.dart';
 import 'package:society_app/pages/user_dashboard/modules/notification.dart';
 import 'package:society_app/pages/user_dashboard/modules/more.dart';
+import 'package:society_app/view_model/guard/features.dart';
+import 'package:society_app/view_model/user_session.dart';
 
 class DashbordPage extends StatefulWidget {
   const DashbordPage({super.key});
@@ -15,16 +18,30 @@ class DashbordPage extends StatefulWidget {
 
 class _DashbordPageState extends State<DashbordPage> {
   NotificationServices notificationServices = NotificationServices();
+  bool isLoading = true;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    initialTask();
+  }
+
+  void initialTask() async {
     notificationServices.requestNotificationPermission();
-    notificationServices.isTokenRefresh();
-    notificationServices.getDeviceToken().then((value) {
-      print('device token');
-      print(value);
+    notificationServices.firebaseInit(context);
+    await notificationServices.getDeviceToken().then(
+      (value) {
+        if (value != null) {
+          Provider.of<GuardFeatures>(context, listen: false)
+              .updateDeviceTokenApi(value);
+          print(value);
+        } else {
+          print('Device token is null');
+        }
+      },
+    );
+    setState(() {
+      isLoading = false;
     });
   }
 
@@ -63,13 +80,13 @@ class _DashbordPageState extends State<DashbordPage> {
                     color: Colors.black,
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: TextField(
                       style: TextStyle(
                         color: Colors.black,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'User Name',
+                        hintText: GlobalData().name,
                         hintStyle: TextStyle(
                           color: Colors.black,
                           fontSize: 20,

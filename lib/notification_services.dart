@@ -1,7 +1,10 @@
 import 'dart:math';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:society_app/pages/gatekeeper_dashboard/guard_notification/guard_notification.dart';
 
 class NotificationServices with ChangeNotifier {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -18,6 +21,11 @@ class NotificationServices with ChangeNotifier {
     notifyListeners(); // Notify listeners after adding to the list
   }
 
+  void onBackgroundNotificationTap(NotificationResponse notificationResponse) {
+    // Assuming you have some logic to navigate based on the payload
+    print('Notification tapped: ${notificationResponse.payload}');
+  }
+
   void initLocalNotification(
       BuildContext context, RemoteMessage message) async {
     var androidInitializationSettings =
@@ -28,8 +36,10 @@ class NotificationServices with ChangeNotifier {
     var initializationSettings = InitializationSettings(
         android: androidInitializationSettings, iOS: iosInitializationSettings);
 
-    await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onDidReceiveBackgroundNotificationResponse: (payload) {});
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveBackgroundNotificationResponse: onBackgroundNotificationTap,
+    );
   }
 
   void requestNotificationPermission() async {
@@ -53,11 +63,17 @@ class NotificationServices with ChangeNotifier {
     }
   }
 
-  void firebaseInit() {
+  void firebaseInit(BuildContext context) {
     FirebaseMessaging.onMessage.listen((message) {
       print('/////////');
       print(message.notification!.title.toString());
       print(message.notification!.body.toString());
+      print(message.messageId);
+      print(message.messageType.toString());
+      print('/////////');
+
+      initLocalNotification(context, message);
+
       addNotificationToList(message); // Add notification to the list
       showNotification(message);
     });
@@ -111,5 +127,12 @@ class NotificationServices with ChangeNotifier {
     messaging.onTokenRefresh.listen((event) {
       print('Token refreshed: $event');
     });
+  }
+
+  void handleMessage(BuildContext context, RemoteMessage message) {
+    if (message.data['type'] == 'msj') {
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => GuardNotificationPage()));
+    }
   }
 }
