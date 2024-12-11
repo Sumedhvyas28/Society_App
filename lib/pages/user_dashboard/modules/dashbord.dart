@@ -26,23 +26,37 @@ class _DashbordPageState extends State<DashbordPage> {
     initialTask();
   }
 
+<<<<<<< HEAD
   void initialTask() async {
     notificationServices.requestNotificationPermission();
     notificationServices.firebaseInit(context);
     await notificationServices.getDeviceToken().then(
+=======
+  void initialTask() {
+    notificationServices.requestNotificationPermission();
+    notificationServices.firebaseInit();
+    notificationServices.getDeviceToken().then(
+>>>>>>> 3e87260feea6e28e8fdec8edc919f2894c673490
       (value) {
         if (value != null) {
           Provider.of<GuardFeatures>(context, listen: false)
               .updateDeviceTokenApi(value);
           print(value);
+<<<<<<< HEAD
+=======
+          print(GlobalData().token);
+>>>>>>> 3e87260feea6e28e8fdec8edc919f2894c673490
         } else {
           print('Device token is null');
         }
       },
     );
+<<<<<<< HEAD
     setState(() {
       isLoading = false;
     });
+=======
+>>>>>>> 3e87260feea6e28e8fdec8edc919f2894c673490
   }
 
   @override

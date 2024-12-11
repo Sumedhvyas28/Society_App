@@ -203,6 +203,16 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                         ),
                       ),
                       SizedBox(height: screenWidth * 0.02),
+<<<<<<< HEAD
+=======
+                      Text(
+                        widget.visitor.visitDate ?? 'N/A',
+                        style: TextStyle(
+                          fontSize: screenWidth * 0.035,
+                          color: Colors.grey,
+                        ),
+                      ),
+>>>>>>> 3e87260feea6e28e8fdec8edc919f2894c673490
                     ],
                   ),
                   const Spacer(),
@@ -249,6 +259,7 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                     style: TextStyle(fontSize: screenWidth * 0.035),
                   ),
                 ),
+<<<<<<< HEAD
               Padding(
                 padding: EdgeInsets.only(top: screenWidth * 0.02),
                 child: Text(
@@ -270,6 +281,8 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                   style: TextStyle(fontSize: screenWidth * 0.035),
                 ),
               ),
+=======
+>>>>>>> 3e87260feea6e28e8fdec8edc919f2894c673490
             ],
           ),
         ),

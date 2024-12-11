@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/appbar.dart';
 import 'package:society_app/constant/pallete.dart';
+<<<<<<< HEAD
 import 'package:society_app/pages/user_dashboard/modules/security_service/note.dart';
+=======
+>>>>>>> 3e87260feea6e28e8fdec8edc919f2894c673490
 import 'package:society_app/pages/user_dashboard/modules/security_service/vendor.dart';
 import 'package:society_app/pages/user_dashboard/modules/security_service/visitor.dart';
 import 'package:society_app/pages/user_dashboard/modules/shop%20module/shop_landing.dart';
@@ -29,9 +32,15 @@ class _SecurityServicePageState extends State<SecurityServicePage> {
     },
     {
       'image': 'assets/img/dashboard/security_service/cashback.png',
+<<<<<<< HEAD
       'title': 'Note',
       'page': NotePage(),
       'description': 'Provdie A Note to Guard'
+=======
+      'title': 'Vendors',
+      'page': VendorTypeVisitor(),
+      'description': 'Access a list of approved vendors for services!'
+>>>>>>> 3e87260feea6e28e8fdec8edc919f2894c673490
     },
   ];
 
