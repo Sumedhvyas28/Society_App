@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:society_app/constant/pallete.dart';
 import 'package:society_app/notification_services.dart';
+import 'package:society_app/pages/society_admin_dashboard/more.dart';
+import 'package:society_app/pages/society_admin_dashboard/notification.dart';
+import 'package:society_app/pages/society_admin_dashboard/sa_edituser.dart';
 import 'package:society_app/pages/society_admin_dashboard/sa_models.dart';
+import 'package:society_app/view_model/user_session.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -11,19 +15,18 @@ class AdminDashboardPage extends StatefulWidget {
 }
 
 class _AdminDashboardPageState extends State<AdminDashboardPage> {
-  // NotificationServices notificationServices = NotificationServices();
+  NotificationServices notificationServices = NotificationServices();
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //   notificationServices.requestNotificationPermission();
-  //   notificationServices.isTokenRefresh();
-  //   notificationServices.getDeviceToken().then((value) {
-  //     print('device token');
-  //     print(value);
-  //   });
-  // }
+  @override
+  void initState() {
+    super.initState();
+    notificationServices.requestNotificationPermission();
+    notificationServices.isTokenRefresh();
+    notificationServices.getDeviceToken().then((value) {
+      print('device token');
+      print(value);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,19 +48,27 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
               padding: const EdgeInsets.all(10),
               child: Row(
                 children: [
-                  Icon(
-                    Icons.person,
-                    size: 35,
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SaEdituser()),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.person,
+                      size: 35,
+                    ),
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: TextField(
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.black,
                       ),
                       decoration: InputDecoration(
-                        hintText: 'Society Admin',
-                        hintStyle: TextStyle(
+                        hintText: GlobalData().name,
+                        hintStyle: const TextStyle(
                           color: Colors.black,
                           fontSize: 20,
                         ),
@@ -79,7 +90,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                       color: Colors.black,
                       size: 40,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => NotificationSAPage()),
+                      );
+                    },
                   ),
                   IconButton(
                     icon: const Icon(
@@ -87,7 +104,12 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                       color: Colors.black,
                       size: 40,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SaMore()),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -97,7 +119,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
             child: Padding(
               padding: const EdgeInsets.all(20),
               child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 60,
                   mainAxisSpacing: 10,
@@ -130,7 +152,7 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
                           ),
                           Text(
                             saGridItems[index]['title'],
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 12, fontWeight: FontWeight.bold),
                           )
                         ],

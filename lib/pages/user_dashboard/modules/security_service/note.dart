@@ -195,6 +195,7 @@ class _NotePageState extends State<NotePage> {
                             time: _expectedTimeController.text,
                             guard: selectedValue);
                         print(data.name);
+
                         print(data.guard);
                         print(data.name);
                         print(data.name);
@@ -205,6 +206,11 @@ class _NotePageState extends State<NotePage> {
                           if (guardNoteViewModel.noteResponse != null) {
                             print(
                                 'Response: ${guardNoteViewModel.noteResponse!.message}');
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content:
+                                      Text('Notification sent successfully')),
+                            );
                           }
                         } catch (e) {
                           print('Failed to submit guard note: $e');
