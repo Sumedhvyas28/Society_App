@@ -30,7 +30,11 @@ class GuardNoteRepository {
       if (response.statusCode == 201) {
         final responseBody = await response.stream.bytesToString();
         final decodedResponse = json.decode(responseBody);
+
+        print('ffff');
         print(responseBody);
+        print('fqfqff');
+
         return postGuardNote.fromJson(decodedResponse);
       } else {
         throw Exception('Error: ${response.statusCode}');

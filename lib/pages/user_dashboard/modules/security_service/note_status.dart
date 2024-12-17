@@ -126,7 +126,7 @@ class ExpandableVisitorCard extends StatefulWidget {
 class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
   bool isExpanded = false;
 
-  bool get isStatusFinalized => widget.Note.status != 'Pending';
+  bool get isStatusFinalized => widget.Note.status != 'Unapproved';
 
   @override
   Widget build(BuildContext context) {

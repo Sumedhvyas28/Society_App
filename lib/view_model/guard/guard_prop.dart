@@ -18,6 +18,7 @@ class GuardProp with ChangeNotifier {
     try {
       visitorDetails = await _repository.getVisitorDetails();
     } catch (e) {
+      print(visitorDetails);
       debugPrint('Error fetching visitor details: $e');
     } finally {
       isLoading = false;

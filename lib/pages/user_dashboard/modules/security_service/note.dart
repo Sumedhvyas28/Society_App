@@ -190,33 +190,45 @@ class _NotePageState extends State<NotePage> {
                       if (_formKey.currentState!.validate() &&
                           _imageFile != null) {
                         final data = newG.Data(
-                            name: _noteNameController.text,
-                            description: _noteDescriptionController.text,
-                            time: _expectedTimeController.text,
-                            guard: selectedValue);
-                        print(data.name);
-
-                        print(data.guard);
-                        print(data.name);
-                        print(data.name);
+                          name: _noteNameController.text,
+                          description: _noteDescriptionController.text,
+                          time: _expectedTimeController.text,
+                          guard: selectedValue,
+                        );
 
                         try {
                           await guardNoteViewModel.postGuardNoteApi(
                               data, _imageFile!);
                           if (guardNoteViewModel.noteResponse != null) {
-                            print(
-                                'Response: ${guardNoteViewModel.noteResponse!.message}');
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                   content:
                                       Text('Notification sent successfully')),
                             );
+
+                            // Clear all fields after successful submission
+                            _noteNameController.clear();
+                            _noteDescriptionController.clear();
+                            _expectedTimeController.clear();
+                            _receiptController.clear();
+                            setState(() {
+                              _imageFile = null;
+                              selectedValue = null;
+                            });
                           }
                         } catch (e) {
-                          print('Failed to submit guard note: $e');
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content:
+                                    Text('Failed to submit guard note: $e')),
+                          );
                         }
                       } else {
-                        print('Validation failed or no image selected.');
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                              content: Text(
+                                  'Validation failed or no image selected.')),
+                        );
                       }
                     },
                     child: Text('Send Request'),

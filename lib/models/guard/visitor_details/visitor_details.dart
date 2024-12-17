@@ -62,24 +62,45 @@ class Data {
       this.userName,
       this.buildingName});
 
+  // Data.fromJson(Map<String, dynamic> json) {
+  //   id = json['id'];
+  //   visitorType = json['visitor_type'];
+  //   visitorName = json['visitor_name'];
+  //   purposeOfVisit = json['purpose_of_visit'];
+  //   contactNumber = json['contact_number'];
+  //   visitorImage = json['visitor_image'];
+  //   visitDate = json['visit_date'];
+  //   expectedDuration = json['expected_duration'];
+  //   additionalNotes = json['additional_notes'];
+  //   attachment = json['attachment'];
+  //   status = json['status'];
+  //   commentMessage = json['comment_message'];
+  //   apartmentNo = json['apartment_no'];
+  //   address = json['address'];
+  //   guardId = json['guard_id'];
+  //   userName = json['user_name'];
+  //   buildingName = json['building_name'];
+  // }
   Data.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    visitorType = json['visitor_type'];
-    visitorName = json['visitor_name'];
-    purposeOfVisit = json['purpose_of_visit'];
-    contactNumber = json['contact_number'];
-    visitorImage = json['visitor_image'];
-    visitDate = json['visit_date'];
-    expectedDuration = json['expected_duration'];
-    additionalNotes = json['additional_notes'];
-    attachment = json['attachment'];
-    status = json['status'];
-    commentMessage = json['comment_message'];
-    apartmentNo = json['apartment_no'];
-    address = json['address'];
-    guardId = json['guard_id'];
-    userName = json['user_name'];
-    buildingName = json['building_name'];
+    id = json['id'] is int
+        ? json['id']
+        : int.tryParse(json['id']?.toString() ?? '');
+    visitorType = json['visitor_type']?.toString();
+    visitorName = json['visitor_name']?.toString();
+    purposeOfVisit = json['purpose_of_visit']?.toString();
+    contactNumber = json['contact_number']?.toString();
+    visitorImage = json['visitor_image']?.toString();
+    visitDate = json['visit_date']?.toString();
+    expectedDuration = json['expected_duration']?.toString();
+    additionalNotes = json['additional_notes']?.toString();
+    attachment = json['attachment']?.toString();
+    status = json['status']?.toString();
+    commentMessage = json['comment_message']?.toString();
+    apartmentNo = json['apartment_no']?.toString();
+    address = json['address']?.toString();
+    guardId = json['guard_id']?.toString();
+    userName = json['user_name']?.toString();
+    buildingName = json['building_name']?.toString();
   }
 
   Map<String, dynamic> toJson() {

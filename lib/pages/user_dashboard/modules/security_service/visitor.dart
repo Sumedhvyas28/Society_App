@@ -166,6 +166,8 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.visitor.status);
+    print(widget.visitor.id);
     final screenWidth = MediaQuery.of(context).size.width;
     String baseUrl = 'https://stagging.intouchsoftwaresolution.com/storage/';
     String imageUrl =

@@ -31,7 +31,9 @@ class _NotePageState extends State<NotePage> {
   }
 
   void _refreshVisitorList() {
-    Provider.of<NoteViewModel>(context, listen: false).fetchNotes();
+    setState(() {
+      Provider.of<NoteViewModel>(context, listen: false).fetchNotes();
+    });
   }
 
   @override
@@ -136,10 +138,13 @@ class ExpandableVisitorCard extends StatefulWidget {
 class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
   bool isExpanded = false;
 
-  bool get isStatusFinalized => widget.Note.status != 'Pending';
+  bool get isStatusFinalized => widget.Note.status != 'Unapproved';
 
   @override
   Widget build(BuildContext context) {
+    print('Status: ${widget.Note.status}');
+    print('Status: ${widget.Note.id}');
+
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Card(
@@ -190,7 +195,8 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                     ],
                   ),
                   const Spacer(),
-                  if (widget.Note.status == 'Pending')
+                  if (widget.Note.status == 'Pending' ||
+                      widget.Note.status == 'Unapproved')
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,15 +270,12 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                           widget.Note.image!.isNotEmpty)
                         Expanded(
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment
-                                .center, // Centers the content vertically
-                            crossAxisAlignment: CrossAxisAlignment
-                                .center, // Centers the content horizontally
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               GestureDetector(
                                 onTap: () {
                                   print(widget.Note.image);
-                                  // Open a dialog to show the image in full screen
                                   _showImageDialog(context, widget.Note.image!);
                                 },
                                 child: widget.Note.image!.startsWith('http')
@@ -349,7 +352,7 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
 
   Future<void> _updateVisitorStatus(String status, String? comment) async {
     final url =
-        'https://www.stagging.intouchsoftwaresolution.com/api/get-note-status/${widget.Note.id}';
+        'https://www.stagging.intouchsoftwaresolution.com/api/get-user-note-status/${widget.Note.id}';
 
     final body = json.encode({
       'status': status,
@@ -367,10 +370,13 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
       );
 
       if (response.statusCode == 200) {
+        print('Response body: ${response.body}');
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Status updated successfully')),
         );
       } else {
+        print(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Failed to update status')),
         );

@@ -25,7 +25,9 @@ class GuardMessages {
       this.toGuardName});
 
   GuardMessages.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    // id = json['id'];
+    id = json['id'] != null ? int.tryParse(json['id'].toString()) : null;
+
     message = json['message'];
     urgencyLevel = json['urgency_level'];
     category = json['category'];
