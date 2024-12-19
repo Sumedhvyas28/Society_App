@@ -146,7 +146,8 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
     print('Status: ${widget.Note.id}');
 
     final screenWidth = MediaQuery.of(context).size.width;
-
+    String baseUrl = 'https://stagging.intouchsoftwaresolution.com/storage/';
+    String imageUrl = '$baseUrl${widget.Note.image}';
     return Card(
       margin: EdgeInsets.symmetric(
         vertical: screenWidth * 0.02,
@@ -203,8 +204,7 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                       children: [
                         ElevatedButton(
                           onPressed: () async {
-                            final comment = await _showCommentDialog();
-                            await _updateVisitorStatus('Approved', comment);
+                            await _updateVisitorStatus('Approved');
                             widget.onStatusUpdated();
                           },
                           style: ElevatedButton.styleFrom(
@@ -222,8 +222,7 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                         SizedBox(width: screenWidth * 0.02),
                         ElevatedButton(
                           onPressed: () async {
-                            final comment = await _showCommentDialog();
-                            await _updateVisitorStatus('Rejected', comment);
+                            await _updateVisitorStatus('Rejected');
                             widget.onStatusUpdated();
                           },
                           style: ElevatedButton.styleFrom(
@@ -276,14 +275,34 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                               GestureDetector(
                                 onTap: () {
                                   print(widget.Note.image);
-                                  _showImageDialog(context, widget.Note.image!);
+                                  _showImageDialog(context, imageUrl);
                                 },
                                 child: widget.Note.image!.startsWith('http')
                                     ? Image.network(
-                                        widget.Note.image!,
+                                        imageUrl,
                                         fit: BoxFit.cover,
-                                        height: screenWidth * 0.3,
-                                        width: screenWidth * 0.3,
+                                        height: screenWidth * 0.5,
+                                        width: screenWidth * 0.5,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          } else {
+                                            return Center(
+                                              child: CircularProgressIndicator(
+                                                value: loadingProgress
+                                                            .expectedTotalBytes !=
+                                                        null
+                                                    ? loadingProgress
+                                                            .cumulativeBytesLoaded /
+                                                        (loadingProgress
+                                                                .expectedTotalBytes ??
+                                                            1)
+                                                    : null,
+                                              ),
+                                            );
+                                          }
+                                        },
                                         errorBuilder:
                                             (context, error, stackTrace) {
                                           return Icon(
@@ -292,16 +311,15 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                                           );
                                         },
                                       )
-                                    : Image.asset(
-                                        widget.Note
-                                            .image!, // Use Image.asset if it's a local asset
+                                    : Image.network(
+                                        imageUrl,
                                         fit: BoxFit.cover,
                                         height: screenWidth * 0.3,
                                         width: screenWidth * 0.3,
                                         errorBuilder:
                                             (context, error, stackTrace) {
                                           return Icon(
-                                            Icons.broken_image,
+                                            Icons.image,
                                             size: screenWidth * 0.3,
                                           );
                                         },
@@ -320,44 +338,11 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
     );
   }
 
-  Future<String?> _showCommentDialog() async {
-    final TextEditingController commentController = TextEditingController();
-
-    return await showDialog<String>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Add Comment (Optional)'),
-          content: TextField(
-            controller: commentController,
-            decoration: InputDecoration(
-              hintText: 'Enter your comment here (optional)',
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Skip'),
-            ),
-            TextButton(
-              onPressed: () =>
-                  Navigator.of(context).pop(commentController.text),
-              child: Text('Submit'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _updateVisitorStatus(String status, String? comment) async {
+  Future<void> _updateVisitorStatus(String status) async {
     final url =
-        'https://www.stagging.intouchsoftwaresolution.com/api/get-user-note-status/${widget.Note.id}';
+        'https://www.stagging.intouchsoftwaresolution.com/api/update-note-status/${widget.Note.id}';
 
-    final body = json.encode({
-      'status': status,
-      'comment_message': comment ?? '',
-    });
+    final body = json.encode({'status': status});
 
     try {
       final response = await http.post(
@@ -395,7 +380,6 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
         return Dialog(
           child: GestureDetector(
             onTap: () {
-              // Close the dialog when tapping outside the image
               Navigator.of(context).pop();
             },
             child: Container(
@@ -403,8 +387,7 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
               child: Center(
                 child: Image.network(
                   imageUrl,
-                  fit: BoxFit
-                      .contain, // Keep the aspect ratio and zoom the image
+                  fit: BoxFit.contain,
                   loadingBuilder: (context, child, loadingProgress) {
                     if (loadingProgress == null) {
                       return child;
@@ -420,7 +403,6 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                     }
                   },
                   errorBuilder: (context, error, stackTrace) {
-                    // Show the broken image icon if image loading fails
                     return Center(
                       child: Icon(
                         Icons.broken_image,

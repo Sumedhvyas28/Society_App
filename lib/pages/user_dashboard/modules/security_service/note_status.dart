@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:society_app/constant/appbar.dart';
@@ -17,9 +16,9 @@ class NoteStatus extends StatefulWidget {
 }
 
 class _NoteStatusState extends State<NoteStatus> {
-  @override
   String _searchQuery = '';
 
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -28,10 +27,10 @@ class _NoteStatusState extends State<NoteStatus> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final TextEditingController _searchController = TextEditingController();
-    String _searchQuery = '';
 
     return Scaffold(
       appBar: CustomAppBar(title: 'Notes'),
@@ -40,6 +39,25 @@ class _NoteStatusState extends State<NoteStatus> {
         padding: EdgeInsets.all(screenWidth * 0.02),
         child: Column(
           children: [
+            TextField(
+              controller: _searchController,
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.toLowerCase();
+                });
+              },
+              decoration: InputDecoration(
+                hintText: 'Search visitors...',
+                prefixIcon: Icon(Icons.search),
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(screenWidth * 0.04),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+            SizedBox(height: screenWidth * 0.02),
             Expanded(
               child: Consumer<UserNoteViewModel>(
                 builder: (context, viewModel, child) {
@@ -67,7 +85,6 @@ class _NoteStatusState extends State<NoteStatus> {
                     );
                   }
 
-                  // Filter visitors based on the search query
                   final filteredVisitors = viewModel.notes
                       .where((visitor) =>
                           (visitor.name?.toLowerCase().contains(_searchQuery) ??
@@ -91,15 +108,17 @@ class _NoteStatusState extends State<NoteStatus> {
                   }
 
                   return ListView.builder(
-                      padding: EdgeInsets.all(screenWidth * 0.02),
-                      itemCount: filteredVisitors.length,
-                      itemBuilder: (context, index) {
-                        final visitor = filteredVisitors[index];
-                        return ExpandableVisitorCard(
-                          Note: visitor,
-                          visitor: null,
-                        );
-                      });
+                    padding: EdgeInsets.all(screenWidth * 0.02),
+                    itemCount: filteredVisitors.length,
+                    itemBuilder: (context, index) {
+                      // Reverse the list to display the latest visitors at the top
+                      final visitor = filteredVisitors.reversed.toList()[index];
+                      return ExpandableVisitorCard(
+                        Note: visitor,
+                        visitor: null,
+                      );
+                    },
+                  );
                 },
               ),
             ),
@@ -194,15 +213,15 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Purpose: ${widget.Note.description ?? 'N/A'}',
+                              'Description: ${widget.Note.description ?? 'N/A'}',
                               style: TextStyle(fontSize: screenWidth * 0.025),
                             ),
                             Text(
-                              'Building: ${widget.Note.sender ?? 'N/A'}',
+                              'Expected Time: ${widget.Note.time ?? 'N/A'}',
                               style: TextStyle(fontSize: screenWidth * 0.025),
                             ),
                             Text(
-                              'Apartment No: ${widget.Note.time ?? 'N/A'}',
+                              'Status: ${widget.Note.status ?? 'N/A'}',
                               style: TextStyle(fontSize: screenWidth * 0.025),
                             ),
                             SizedBox(height: screenWidth * 0.02),
@@ -215,10 +234,8 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                           widget.Note.image!.isNotEmpty)
                         Expanded(
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment
-                                .center, // Centers the content vertically
-                            crossAxisAlignment: CrossAxisAlignment
-                                .center, // Centers the content horizontally
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               GestureDetector(
                                 onTap: () {
@@ -228,10 +245,10 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                                 },
                                 child: widget.Note.image!.startsWith('http')
                                     ? Image.network(
-                                        imageUrl, // Use the full URL
+                                        imageUrl,
                                         fit: BoxFit.cover,
-                                        height: screenWidth * 0.3,
-                                        width: screenWidth * 0.3,
+                                        height: screenWidth * 0.5,
+                                        width: screenWidth * 0.5,
                                         loadingBuilder:
                                             (context, child, loadingProgress) {
                                           if (loadingProgress == null) {
@@ -260,10 +277,10 @@ class _ExpandableVisitorCardState extends State<ExpandableVisitorCard> {
                                           );
                                         },
                                       )
-                                    : Image.asset(
-                                        widget.Note.image!,
+                                    : Image.network(
+                                        imageUrl,
                                         fit: BoxFit.cover,
-                                        height: screenWidth * 0.6,
+                                        height: screenWidth * 0.3,
                                         width: screenWidth * 0.3,
                                         errorBuilder:
                                             (context, error, stackTrace) {
